@@ -200,3 +200,50 @@ The PaginatedResponse is a generic wrapper matching PokéAPI's paginated format:
 PokemonListItem has a one-to-many relationship with PokemonType. Fetching by ID yields a PokemonDetail, which has one-to-many relationships with PokemonStat, PokemonAbility and PokemonMove. From the detail, following the species URL leads to a PokemonSpecies, which has a one-to-one link to its EvolutionChain. The chain is a recursive tree of EvolutionNode objects, each of which can hold one or more EvolutionDetail records describing how the evolution is triggered.
 
 ---
+## 7. Design System
+
+### 7.1 Color Palette
+
+#### Primary Colors
+
+| Token | Hex | Usage |
+|---|---|---|
+| colors.primary | #DC0A2D | Pokédex red: header, CTAs, main accents |
+| colors.secondary | #3B4CCA | Pokémon blue: links, secondary elements |
+| colors.accent | #FFDE00 | Pokémon yellow: highlights, active badges |
+| colors.background | #F5F5F5 | Main app background |
+| colors.surface | #FFFFFF | Card, modal and sheet backgrounds |
+| colors.text.primary | #1A1A2E | Primary text |
+| colors.text.secondary | #6B7280 | Secondary text, captions |
+| colors.text.disabled | #9CA3AF | Disabled text |
+| colors.border | #E5E7EB | Borders and separators |
+
+#### Pokémon Type Colors
+
+Each of the 18 types has a designated color. Normal is #A8A77A, fire is #EE8130, water is #6390F0, electric is #F7D02C, grass is #7AC74C, ice is #96D9D6, fighting is #C22E28, poison is #A33EA1, ground is #E2BF65, flying is #A98FF3, psychic is #F95587, bug is #A6B91A, rock is #B6A136, ghost is #735797, dragon is #6F35FC, dark is #705746, steel is #B7B7CE and fairy is #D685AD. These colors are used in type badges, detail screen backgrounds and filter chips.
+
+### 7.2 Typography
+
+| Token | Font | Size | Weight | Line Height | Usage |
+|---|---|---|---|---|---|
+| typography.h1 | System (Roboto) | 32px | Bold (700) | 38px | Screen titles |
+| typography.h2 | System | 24px | SemiBold (600) | 30px | Section titles |
+| typography.h3 | System | 20px | SemiBold (600) | 26px | Subtitles |
+| typography.body | System | 16px | Regular (400) | 24px | Main body text |
+| typography.bodySmall | System | 14px | Regular (400) | 20px | Secondary text |
+| typography.caption | System | 12px | Medium (500) | 16px | Labels, badges |
+| typography.number | Roboto Mono | 14px | Medium (500) | 18px | IDs, numeric stats |
+
+### 7.3 Spacing (8px base)
+
+The spacing scale uses a base unit of 8px. The tokens are: xs at 4 (half unit, minimum inline separation), sm at 8 (one unit, small internal padding), md at 16 (two units, standard card and container padding), lg at 24 (three units, section separation), xl at 32 (four units, screen margin) and xxl at 48 (six units, separation between major blocks).
+
+### 7.4 Border Radius
+
+The scale goes: sm at 8px for badges and type chips, md at 12px for Pokémon cards, lg at 16px for bottom sheets and modals, xl at 24px for the search bar, and full at 9999px for circular avatars and FABs.
+
+### 7.5 Shadows / Elevation
+
+Three levels are defined. The small shadow uses a 1px vertical offset with 0.05 opacity and elevation 1 on Android. The medium shadow uses a 2px offset with 0.1 opacity and elevation 3. The large shadow uses a 4px offset with 0.15 opacity and elevation 6. All three use black as the shadow color with respective blur radii of 2, 4 and 8.
+
+---
