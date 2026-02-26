@@ -172,3 +172,31 @@ Acceptance criteria:
 
 
 ---
+
+## 6. Data Model
+
+### 6.1 Core TypeScript Interfaces
+
+All interfaces live in the `src/domain/interfaces/` directory and define the contract between layers.
+
+#### PokemonListItem
+
+This is the lightweight representation used in the main list. It contains the Pokémon's numeric ID, its name, the resource URL, the sprite URL pointing to the front_default image, and an array of types. Each type entry has a slot (1 or 2) and a nested object with the type name and URL. The type name is constrained to a union of the 18 official Pokémon types: normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel and fairy.
+
+#### PokemonDetail
+
+This is the full data object used on the detail screen. It extends the list item's fields with height (in decimeters), weight (in hectograms), base experience, a full stats array, abilities, sprites and moves. Each stat entry holds a base stat value, an effort value and the stat's name — one of hp, attack, defense, special-attack, special-defense or speed. Each ability entry has the ability name and URL, a boolean for whether it is hidden, and its slot number. The sprites object holds frontDefault and frontShiny URLs, plus nested objects for official artwork and home artwork. Moves are limited to the first 20 entries for performance; each one holds the move name and an array of version group details including level learned at, learn method and version group.
+
+#### EvolutionChain
+
+The evolution chain is a tree structure. The top-level object has an ID and a root chain node. Each node contains the species reference, an array of evolution details, an array of child nodes (evolvesTo) and a resolved pokemonId extracted from the species URL. Evolution details describe the trigger (level-up, item, trade, etc.), minimum level, required item, minimum happiness and time of day. Any of these fields can be null depending on the evolution method.
+
+#### API Response Types
+
+The PaginatedResponse is a generic wrapper matching PokéAPI's paginated format: a total count, nullable next and previous URLs, and a results array of the parameterized type. NamedAPIResource is the basic reference object used throughout the API, containing a name and URL. PokemonSpecies holds the species-level data used for the About tab: flavor text entries, genera, evolution chain URL reference, generation, color, habitat (nullable), gender rate (-1 for genderless, 0–8 as the female probability out of eight), capture rate, base happiness and growth rate.
+
+### 6.2 Entity Relationships
+
+PokemonListItem has a one-to-many relationship with PokemonType. Fetching by ID yields a PokemonDetail, which has one-to-many relationships with PokemonStat, PokemonAbility and PokemonMove. From the detail, following the species URL leads to a PokemonSpecies, which has a one-to-one link to its EvolutionChain. The chain is a recursive tree of EvolutionNode objects, each of which can hold one or more EvolutionDetail records describing how the evolution is triggered.
+
+---
