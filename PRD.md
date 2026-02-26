@@ -87,3 +87,85 @@ We want this to be the go-to Pokédex app for fans and developers alike: a fast,
 | Offline | Does not work | Cached data + local favorites |
 
 ---
+
+## 3. Functional Requirements
+
+### 3.1 Module: Pokémon List
+
+**[US-001]** As a user, I want to see a list of Pokémon when I open the app, so I can start exploring the Pokédex right away.
+
+Acceptance criteria:
+- The main screen shows a scrollable list with each Pokémon's image, name and number
+- 20 Pokémon load initially, with more fetched via infinite scroll
+- Each card displays: sprite, #ID, name and type(s) with colored badges
+- Skeleton loading appears while data is being fetched
+- The list works with TalkBack
+
+**[US-002]** As a user, I want to search Pokémon by name or number, so I can quickly find the one I'm looking for.
+
+Acceptance criteria:
+- Search bar visible at the top of the list
+- Partial name search (e.g. "char" finds Charmander, Charmeleon, Charizard)
+- Exact number search (e.g. "25" finds Pikachu)
+- Results update with a 300ms debounce
+- A friendly message appears when there are no results
+
+**[US-003]** As a user, I want to filter Pokémon by type and generation, so I can explore specific categories.
+
+Acceptance criteria:
+- Filter button opens a bottom sheet
+- Type filter: selectable chips (fire, water, grass, etc.)
+- Generation filter: I through IX
+- Filters can be combined (e.g. Fire type + Gen I)
+- A badge on the button shows how many filters are active
+- "Clear filters" button resets everything
+
+### 3.2 Module: Pokémon Detail
+
+**[US-004]** As a user, I want to see detailed information about a Pokémon, so I can learn all its characteristics.
+
+Acceptance criteria:
+- Screen shows: large image, name, number, type(s), height and weight
+- Tabs or sections for: Stats, Evolutions, Moves, About
+- Stats rendered as animated progress bars with numeric values
+- Screen background adapts to the Pokémon's primary type color
+- Smooth transition animation from the list to the detail view
+
+**[US-005]** As a user, I want to see a Pokémon's evolution chain, so I can understand how it evolves.
+
+Acceptance criteria:
+- Evolution chain displayed horizontally with arrows between stages
+- Each stage shows sprite, name and evolution level or condition
+- Tapping any stage navigates to that Pokémon's detail screen
+- Branching evolutions (e.g. Eevee) are displayed correctly
+
+### 3.3 Module: Favorites
+
+**[US-006]** As a user, I want to mark Pokémon as favorites, so I can quickly access the ones I like most.
+
+Acceptance criteria:
+- Heart button on both the list card and the detail view
+- Instant toggle with haptic feedback (light vibration)
+- Favorites persist between sessions (AsyncStorage)
+- Dedicated "Favorites" tab in the bottom navigation
+- The favorites list supports drag & drop reordering
+
+**[US-007]** As a user, I want to see my list of favorite Pokémon, so I can access them quickly.
+
+Acceptance criteria:
+- Favorites screen displays a grid of marked Pokémon
+- Empty state with illustration and a CTA to explore the Pokédex
+- Total favorites counter visible
+- Option to remove all favorites with a confirmation dialog
+
+### 3.4 Module: Comparison (Post-MVP)
+
+**[US-008]** As a user, I want to compare two Pokémon side by side, so I can decide which one is better for my team.
+
+Acceptance criteria:
+- Selector to pick two Pokémon
+- Split-screen view showing stats, types and abilities side by side
+- Stat bars visually indicate which Pokémon is stronger in each category
+- Type effectiveness between both Pokémon is shown
+
+---
