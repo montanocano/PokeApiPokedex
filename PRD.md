@@ -139,33 +139,36 @@ Acceptance criteria:
 - Tapping any stage navigates to that Pokémon's detail screen
 - Branching evolutions (e.g. Eevee) are displayed correctly
 
-### 3.3 Module: Favorites
 
-**[US-006]** As a user, I want to mark Pokémon as favorites, so I can quickly access the ones I like most.
+---
 
-Acceptance criteria:
-- ✅ Heart button on both the list card and the detail view
-- ✅ Instant toggle with haptic feedback (light vibration)
-- ✅ Favorites persist between sessions (AsyncStorage)
-- ✅ Dedicated "Favorites" tab in the bottom navigation
-- ✅ The favorites list supports drag & drop reordering
+## 4. Non-Functional Requirements
 
-**[US-007]** As a user, I want to see my list of favorite Pokémon, so I can access them quickly.
+### 4.1 Performance
 
-Acceptance criteria:
-- ✅ Favorites screen displays a grid of marked Pokémon
-- ✅ Empty state with illustration and a CTA to explore the Pokédex
-- ✅ Total favorites counter visible
-- ✅ Option to remove all favorites with a confirmation dialog
+| Metric | Target | Measurement Tool |
+|---|---|---|
+| Time to Interactive (TTI) | < 2 seconds on 4G | React Native Performance Monitor |
+| FPS during scroll | ≥ 58 FPS steady | Perf Monitor / Flipper |
+| Bundle size | < 15 MB (APK) | EAS Build metrics |
+| Memory usage | < 150 MB under active use | Android Profiler |
+| Search time | < 100ms for local filtering | Performance.now() |
+| Image loading | < 500ms with placeholder | Custom timing hooks |
 
-### 3.4 Module: Comparison (Post-MVP)
+### 4.2 Security
 
-**[US-008]** As a user, I want to compare two Pokémon side by side, so I can decide which one is better for my team.
+- No sensitive user data is stored.
+- All API calls go over HTTPS.
+- AsyncStorage only holds favorite IDs and cached public data.
+- No authentication is needed (PokéAPI is public).
 
-Acceptance criteria:
-- ✅ Selector to pick two Pokémon
-- ✅ Split-screen view showing stats, types and abilities side by side
-- ✅ Stat bars visually indicate which Pokémon is stronger in each category
-- ✅ Type effectiveness between both Pokémon is shown
+### 4.3 Accessibility (WCAG 2.1 AA)
+
+- All interactive elements carry a descriptive accessibilityLabel.
+- Minimum contrast of 4.5:1 for regular text, 3:1 for large text.
+- Minimum touch target size: 44×44 points.
+- Full TalkBack support.
+- Honors the system's "Reduce Motion" setting.
+
 
 ---
