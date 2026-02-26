@@ -247,3 +247,180 @@ The scale goes: sm at 8px for badges and type chips, md at 12px for Pokémon car
 Three levels are defined. The small shadow uses a 1px vertical offset with 0.05 opacity and elevation 1 on Android. The medium shadow uses a 2px offset with 0.1 opacity and elevation 3. The large shadow uses a 4px offset with 0.15 opacity and elevation 6. All three use black as the shadow color with respective blur radii of 2, 4 and 8.
 
 ---
+
+## 8. User Flows & Wireframes
+
+### 8.1 Main Flow: Explore Pokédex
+
+```
+[App Launch]
+     │
+     ▼
+[Splash Screen] ──2s──▶ [Home Screen: Pokémon List]
+                              │
+                 ┌────────────┼────────────┐
+                 │            │            │
+            [Scroll Down] [Search]    [Filter]
+            Load +30      Debounce    Bottom Sheet
+                 │         300ms       Type/Gen
+                 ▼            │            │
+          [Infinite List]     ▼            ▼
+                 │      [Filtered Results]
+                 │            │
+                 └──────┬─────┘
+                        │
+                   [Tap Card]
+                        │
+                        ▼
+                 [Detail Screen]
+                 ┌───┬───┬───┐
+                 │   │   │   │
+              [About][Stats][Evo][Moves]
+                        │
+                   [Tap Evo Stage]
+                        │
+                        ▼
+                 [New Detail Screen]
+```
+
+### 8.2 Wireframes
+
+#### Home Screen (List)
+
+```
+┌──────────────────────────────────┐
+│  Pokédex              [filter]   │  ◄── Header
+├──────────────────────────────────┤
+│  ┌──────────────────────────────┐│
+│  │  🔍 Search Pokémon...        ││  ◄── Search Bar
+│  └──────────────────────────────┘│
+│                                  │
+│  ┌─────────────┐ ┌─────────────┐ │
+│  │  ┌─────┐    │ │  ┌─────┐    │ │
+│  │  │ IMG │    │ │  │ IMG │    │ │
+│  │  └─────┘    │ │  └─────┘    │ │  ◄── Pokémon Grid
+│  │ #001       ♥ │ │ #002       ♥ │ │
+│  │ Bulbasaur    │ │ Ivysaur      │ │
+│  │ [Grass][Poi] │ │ [Grass][Poi] │ │
+│  └─────────────┘ └─────────────┘ │
+│                                  │
+│  ┌─────────────┐ ┌─────────────┐ │
+│  │  ┌─────┐    │ │  ┌─────┐    │ │
+│  │  │ IMG │    │ │  │ IMG │    │ │
+│  │  └─────┘    │ │  └─────┘    │ │
+│  │ #003       ♥ │ │ #004       ♥ │ │
+│  │ Venusaur     │ │ Charmander   │ │
+│  │ [Grass][Poi] │ │ [Fire]       │ │
+│  └─────────────┘ └─────────────┘ │
+│                                  │
+├──────────────────────────────────┤
+│  [🏠 Home]  [♥ Favs]  [⚔ Compare] │  ◄── Tab Bar
+└──────────────────────────────────┘
+```
+
+#### Detail Screen
+
+```
+┌──────────────────────────────────┐
+│  [←]  #025 Pikachu         [♥]  │  ◄── Header + back + fav
+├──────────────────────────────────┤
+│ ████████████████████████████████ │
+│ ████████████████████████████████ │  ◄── Background matches type
+│ ███████ [ ARTWORK ] ████████████ │      (Electric = #F7D02C)
+│ ████████████████████████████████ │
+│ ████████████████████████████████ │
+├──────────────────────────────────┤
+│                                  │
+│   [Electric]                     │  ◄── Type badge
+│                                  │
+│   [About] [Stats] [Evo] [Moves] │  ◄── Tabs
+│   ─────── ═══════                │
+│                                  │
+│   HP          ████████░░░  35    │
+│   Attack      █████████░░  55    │  ◄── Animated bars
+│   Defense     ██████░░░░░  40    │
+│   Sp.Atk      ████████░░░  50    │
+│   Sp.Def      ████████░░░  50    │
+│   Speed       ███████████  90    │
+│                                  │
+│   Total: 320                     │
+│                                  │
+└──────────────────────────────────┘
+```
+
+#### Favorites Screen
+
+```
+┌──────────────────────────────────┐
+│  My Favorites (12)               │  ◄── Header + count
+├──────────────────────────────────┤
+│                                  │
+│  ┌────────┐┌────────┐┌────────┐  │
+│  │ [IMG]  ││ [IMG]  ││ [IMG]  │  │
+│  │ #025   ││ #006   ││ #150   │  │  ◄── 3-column grid
+│  │Pikachu ││Chariza ││Mewtwo  │  │
+│  └────────┘└────────┘└────────┘  │
+│                                  │
+│  ┌────────┐┌────────┐┌────────┐  │
+│  │ [IMG]  ││ [IMG]  ││ [IMG]  │  │
+│  │ #094   ││ #130   ││ #149   │  │
+│  │Gengar  ││Gyarado ││Dragnit │  │
+│  └────────┘└────────┘└────────┘  │
+│                                  │
+├──────────────────────────────────┤
+│  [🏠 Home]  [♥ Favs]  [⚔ Compare] │
+└──────────────────────────────────┘
+```
+
+#### Empty State — Favorites
+
+```
+┌──────────────────────────────────┐
+│  My Favorites (0)                │
+├──────────────────────────────────┤
+│                                  │
+│                                  │
+│         ┌────────────┐           │
+│         │  (empty)   │           │
+│         │ illustration│          │
+│         └────────────┘           │
+│                                  │
+│    You have no favorites yet.    │
+│    Explore the Pokédex and mark  │
+│    your favorite Pokémon.        │
+│                                  │
+│      ┌──────────────────┐        │
+│      │ Explore Pokédex   │       │  ◄── CTA
+│      └──────────────────┘        │
+│                                  │
+├──────────────────────────────────┤
+│  [🏠 Home]  [♥ Favs]  [⚔ Compare] │
+└──────────────────────────────────┘
+```
+
+#### Filter Bottom Sheet
+
+```
+┌──────────────────────────────────┐
+│                                  │
+│  (dimmed background)             │
+│                                  │
+├──────────────────────────────────┤
+│  ───  (drag handle)              │
+│                                  │
+│  Filter by Type                  │
+│  [Fire][Water][Grass][Electric]  │
+│  [Psychic][Dragon][Dark][Steel]  │
+│  [Ice][Fighting][Poison][Ground] │
+│  [Flying][Bug][Rock][Ghost]      │
+│  [Fairy][Normal]                 │
+│                                  │
+│  Filter by Generation            │
+│  [I] [II] [III] [IV] [V]        │
+│  [VI] [VII] [VIII] [IX]         │
+│                                  │
+│  [Clear]            [Apply (3)] │
+└──────────────────────────────────┘
+```
+
+---
