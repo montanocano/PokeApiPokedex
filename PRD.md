@@ -424,3 +424,58 @@ Three levels are defined. The small shadow uses a 1px vertical offset with 0.05 
 ```
 
 ---
+
+## 9. API Integration Specs
+
+### 9.1 Base Configuration
+
+The API client is built on top of Axios with a base URL pointing to `https://pokeapi.co/api/v2`. It uses a global timeout of 10 seconds and sets the Accept header to application/json.
+
+A response interceptor is configured at the client level. On success, it unwraps the Axios response object and returns the data payload directly, so service methods never have to deal with the response wrapper. On failure, it distinguishes between timeouts (connection aborted errors, surfaced as a "connection timed out" message), network errors (no response at all, surfaced as "no internet connection"), and standard HTTP errors which are re-thrown as-is.
+
+### 9.2 Endpoints Used
+
+The app consumes six PokéAPI endpoints:
+
+- **Pokémon list** (`GET /pokemon`) — Accepts offset and limit query parameters. Returns a paginated response with the total count, next and previous page URLs, and an array of name/URL references.
+- **Pokémon detail** (`GET /pokemon/{id}`) — Returns the full dataset for a single Pokémon, including types, stats, abilities, sprites and moves.
+- **Pokémon species** (`GET /pokemon-species/{id}`) — Returns species-level data such as flavor text, genera, the evolution chain URL, generation, color, habitat and breeding info.
+- **Evolution chain** (`GET /evolution-chain/{id}`) — Returns a recursive tree of species references with evolution triggers and conditions.
+- **Type** (`GET /type/{name}`) — Returns all Pokémon belonging to a given type. Used for type-based filtering.
+- **Generation** (`GET /generation/{id}`) — Returns all Pokémon species introduced in a given generation. Used for generation-based filtering.
+
+### 9.3 Pokémon Service
+
+A PokemonService class encapsulates all API interactions and data transformation. Its job is to call the raw endpoints through the Axios client and return properly typed, camelCase objects that match the TypeScript interfaces defined in the data model.
+
+The **getList** method takes an offset and limit (defaulting to 0 and 20), calls the Pokémon list endpoint and returns the paginated response directly, since the top-level structure already matches our PaginatedResponse interface.
+
+The **getDetail** method fetches a single Pokémon by ID and runs it through a transformation function. This transformer maps snake_case fields from the API into camelCase: base_experience becomes baseExperience, base_stat becomes baseStat, is_hidden becomes isHidden, front_default becomes frontDefault, and so on. Nested structures like the official-artwork sprites get reorganized into a cleaner officialArtwork property. Moves are trimmed to the first 20 entries to keep the detail object lightweight.
+
+The **getSpecies** method similarly fetches and transforms species data, converting flavor_text_entries into flavorTextEntries, evolution_chain into evolutionChain, gender_rate into genderRate, capture_rate into captureRate, base_happiness into baseHappiness and growth_rate into growthRate.
+
+The **getEvolutionChain** method accepts a full URL (since the species response provides the chain URL directly rather than just an ID), fetches the chain data and recursively transforms it. Each node in the chain is mapped to an EvolutionNode with a species reference, a pokemonId extracted from the species URL, an array of evolution details (with trigger, minLevel, item, minHappiness and timeOfDay) and a recursive evolvesTo array containing the next stages.
+
+A small helper function handles the URL-to-ID extraction: it splits a PokéAPI resource URL by slashes, filters out empty segments and parses the last segment as an integer.
+
+### 9.4 Cache Strategy
+
+The app uses an in-memory cache manager built on a simple Map structure. Each cache entry holds the stored data, a timestamp of when it was written and a TTL (time-to-live) in milliseconds.
+
+When reading from the cache, the manager checks whether the entry exists and whether the elapsed time since its timestamp exceeds the TTL. Expired entries are deleted and treated as misses.
+
+Default TTLs are 5 minutes for list data and 30 minutes for detail data, since individual Pokémon info rarely changes. The cache can also be explicitly invalidated per key or cleared entirely.
+
+The Pokémon store checks the cache before making network requests. On a cache hit for a detail view, the API call is skipped entirely and the cached object is returned. This cuts down network usage significantly when users go back and forth between the list and detail screens.
+
+### 9.5 Rate Limiting and Error Handling
+
+PokéAPI is free and requires no authentication, but it does enforce an implicit rate limit. The app handles this with five strategies:
+
+- **Aggressive caching** — As described above, with 5-minute and 30-minute TTLs depending on the data type.
+- **Request deduplication** — If a request is already in flight for the same resource URL, the existing Promise is reused instead of firing a duplicate call.
+- **Exponential backoff retry** — Failed requests are retried up to 3 times with increasing delays of 1, 2 and 4 seconds.
+- **Global timeout** — Every request times out after 10 seconds.
+- **Error boundaries** — React ErrorBoundary components wrap major screen areas. When an unhandled error is caught, they display a friendly fallback UI with a retry button instead of crashing the app.
+
+---
