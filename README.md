@@ -10,19 +10,6 @@ Guía paso a paso para configurar el entorno de desarrollo del proyecto React Na
 
 ## 1. Instalar Node.js (v18+)
 
-### macOS / Linux
-
-Instalar usando nvm (recomendado):
-
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-source ~/.bashrc
-nvm install 18
-nvm use 18
-```
-
-### Windows
-
 Descargar el instalador desde https://nodejs.org/ (versión LTS 18 o superior) y seguir el asistente de instalación.
 
 ### Verificar la instalación
