@@ -479,3 +479,61 @@ PokéAPI is free and requires no authentication, but it does enforce an implicit
 - **Error boundaries** — React ErrorBoundary components wrap major screen areas. When an unhandled error is caught, they display a friendly fallback UI with a retry button instead of crashing the app.
 
 ---
+
+## 10. Development Phases
+
+The development is split into 4 phases. Each delivers functional value and is potentially shippable.
+
+### Phase 1: Foundation (Weeks 1–2)
+
+| Task | Priority | Estimate |
+|---|---|---|
+| Project setup with Expo + TypeScript + ESLint + Prettier | P0 | 4h |
+| Configure React Navigation (Stack + Tab) | P0 | 3h |
+| Build theme system (colors, typography, spacing) | P0 | 3h |
+| Implement pokeApiClient with Axios | P0 | 2h |
+| Create usePokemonStore with Zustand + Immer | P0 | 4h |
+| Build PokemonCard component | P0 | 3h |
+| HomeScreen with basic FlatList + pagination | P0 | 5h |
+| Skeleton loading components | P1 | 2h |
+
+### Phase 2: Core Features (Weeks 3–4)
+
+| Task | Priority | Estimate |
+|---|---|---|
+| Full DetailScreen with tabs | P0 | 6h |
+| PokemonStats with animated bars | P0 | 3h |
+| EvolutionChain component | P0 | 4h |
+| Search with debounce + useFilterStore | P0 | 3h |
+| Type and generation filters (Bottom Sheet) | P1 | 4h |
+| TypeBadge with dynamic colors | P1 | 1h |
+| Animated navigation transitions | P1 | 2h |
+| Cache layer with CacheManager | P1 | 3h |
+
+### Phase 3: Polish & Persistence (Weeks 5–6)
+
+| Task | Priority | Estimate |
+|---|---|---|
+| useFavoritesStore with AsyncStorage persist | P0 | 3h |
+| FavoritesScreen with grid and empty state | P0 | 3h |
+| Global error handling + ErrorBoundary | P0 | 3h |
+| Accessibility: labels, contrast, sizes | P1 | 4h |
+| Optimize FlatList (getItemLayout, windowSize) | P1 | 2h |
+| Image caching with Expo Image | P1 | 2h |
+| Pull-to-refresh on lists | P2 | 1h |
+| Haptic feedback on favorites | P2 | 1h |
+
+### Phase 4: Advanced & Release (Weeks 7–8)
+
+| Task | Priority | Estimate |
+|---|---|---|
+| CompareScreen (Post-MVP) | P2 | 6h |
+| Unit tests (Jest) for stores and services | P1 | 4h |
+| Component tests (RNTL) for key components | P1 | 3h |
+| Dark mode support | P2 | 3h |
+| Custom app icon and splash screen | P1 | 2h |
+| Production build (EAS Build) | P0 | 2h |
+| Full README.md for portfolio | P0 | 2h |
+| Performance profiling and final optimization | P1 | 3h |
+
+---
