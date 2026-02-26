@@ -173,6 +173,162 @@ Acceptance criteria:
 
 ---
 
+## 5. Technical Architecture
+
+### 5.1 Technology Stack
+
+| Layer | Technology | Version | Rationale |
+|---|---|---|---|
+| Runtime | React Native + Expo | 0.73+ / SDK 50 | Fast cross-platform development, OTA updates |
+| Language | TypeScript | 5.x strict | Type safety, better DX |
+| Global State | Zustand | 4.x | Minimal API, no boilerplate, Immer-compatible |
+| Immutability | Immer | 10.x | Safe mutations, readable code |
+| Navigation | React Navigation | 6.x | Industry standard, deep linking |
+| HTTP Client | Axios | 1.x | Interceptors, cancellation, global config |
+| Cache / Storage | AsyncStorage | 1.x | Simple and reliable local persistence |
+| Images | Expo Image / FastImage | 1.x | Native cache, placeholders, transitions |
+| Icons | Lucide React Native | 0.3x | Modern icons, tree-shakeable |
+
+### 5.2 Architecture Diagram
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      UI LAYER                                │
+│  ┌───────────────┐  ┌──────────────┐  ┌────────────────┐    │
+│  │  Screens       │  │  Components  │  │  Navigation    │    │
+│  │  (Pages)       │  │  (Reusable)  │  │  (Stack/Tab)   │    │
+│  └───────────────┘  └──────────────┘  └────────────────┘    │
+└──────────────────────────────────────────────────────────────┘
+                            │ calls UseCases
+┌──────────────────────────────────────────────────────────────┐
+│                     DOMAIN LAYER                             │
+│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────────┐   │
+│  │ Entities │ │   DTOs   │ │ UseCases  │ │  Interfaces  │   │
+│  │          │ │          │ │ (logic)   │ │  (IRepo*)    │   │
+│  └──────────┘ └──────────┘ └───────────┘ └──────────────┘   │
+└──────────────────────────────────────────────────────────────┘
+                            │ implements Interfaces
+┌──────────────────────────────────────────────────────────────┐
+│                      DATA LAYER                              │
+│  ┌───────────────┐  ┌──────────────────────────────────┐     │
+│  │ API/           │  │ Repos/                           │     │
+│  │ ApiString.ts   │  │ RepoPokemon.ts                   │     │
+│  │ (base URLs)    │  │ RepoEvolution.ts ...              │     │
+│  └───────────────┘  └──────────────────────────────────┘     │
+└──────────────────────────────────────────────────────────────┘
+                            │ HTTPS
+                    ┌─────────────────┐
+                    │   PokéAPI v2    │
+                    │  pokeapi.co/v2  │
+                    └─────────────────┘
+```
+
+### 5.3 Folder Structure
+
+The project follows Clean Architecture principles with three layers: **DATA/**, **DOMAIN/** and **UI/**. Dependencies always point inward — the UI depends on the Domain, and the Data layer implements interfaces defined by the Domain. The Domain layer has zero dependency on anything external.
+
+#### DATA/
+
+This is where all communication with the outside world lives.
+
+- **API/**
+  - **ApiString.ts** — A static class (ApiString) that exposes a single method, getAPIBase(), which returns the base URL of the PokéAPI (`https://pokeapi.co/api/v2`). Every repository calls this to build its endpoint URLs, so if the base ever changes there is only one place to update.
+
+- **Repos/**
+  - **RepoPokemon.ts** — Implements IRepoPokemon. The class RepoPokemon calls the PokéAPI pokemon endpoint through Axios, transforms the raw snake_case response into camelCase domain entities (Pokemon, PokemonDetail) and returns them. It handles the list endpoint with offset and limit for pagination, and the detail endpoint by ID.
+  - **RepoEvolution.ts** — Implements IRepoEvolution. Calls the evolution-chain endpoint, recursively walks the chain tree and returns an array of EvolutionNode entities with sprites, species names and trigger conditions already resolved.
+  - **RepoSpecies.ts** — Implements IRepoSpecies. Calls the pokemon-species endpoint and returns a PokemonSpecies entity with flavor text filtered to English, genera, generation reference and breeding data.
+  - **RepoType.ts** — Implements IRepoType. Calls the type endpoint by name and returns the list of Pokémon belonging to that type, used by the filtering use case.
+  - **RepoFavorites.ts** — Implements IRepoFavorites. Wraps AsyncStorage to persist and retrieve the array of favorite Pokémon IDs locally. Also handles clearing all favorites.
+
+#### DOMAIN/
+
+Pure business logic. No imports from Axios, AsyncStorage, React Native or any framework.
+
+- **Entities/**
+  - **Pokemon.ts** — The core entity. Properties: id (number), name (string), height (number, decimeters), weight (number, hectograms), baseExperience (number), types (PokemonType array), sprite (string, URL to front_default image). Constructor receives all fields.
+  - **PokemonDetail.ts** — Extends the base Pokémon data with stats (PokemonStat array), abilities (PokemonAbility array), sprites (PokemonSprites object with frontDefault, frontShiny, officialArtwork and home URLs), species reference (name and URL) and moves (PokemonMove array, capped at 20). Constructor receives all fields.
+  - **PokemonStat.ts** — Properties: baseStat (number), effort (number), statName (StatName union type: hp, attack, defense, special-attack, special-defense, speed).
+  - **PokemonType.ts** — Properties: slot (1 or 2), typeName (TypeName union of the 18 official types).
+  - **PokemonAbility.ts** — Properties: abilityName (string), isHidden (boolean), slot (number).
+  - **EvolutionNode.ts** — Properties: speciesName (string), pokemonId (number), sprite (string), trigger (string), minLevel (number or null), item (string or null), evolvesTo (EvolutionNode array, recursive).
+  - **PokemonSpecies.ts** — Properties: id (number), name (string), flavorText (string, already filtered to English), genus (string), generation (string), color (string), habitat (string or null), genderRate (number), captureRate (number), baseHappiness (number), growthRate (string), evolutionChainUrl (string).
+  - **Favorite.ts** — Properties: pokemonId (number), addedAt (Date).
+
+- **Dto/**
+  - **PokemonListDto.ts** — A trimmed DTO for the main list screen. Properties: id (number), name (string), sprite (string), types (TypeName array). This avoids passing the full heavy entity to the UI when only a few fields are needed.
+  - **PokemonDetailWithSpeciesDto.ts** — Combines the detail entity with species data for the detail screen. Properties: id, name, height, weight, types, stats, abilities, sprites, flavorText, genus, generation, color, evolutionChainUrl. Built by the detail use case after fetching both endpoints.
+  - **PokemonCompareDto.ts** — Used by the compare screen. Properties: two PokemonDetail references plus a typeEffectiveness string indicating advantage/disadvantage between them.
+  - **FavoritePokemonDto.ts** — Properties: pokemonId, name, sprite. A lightweight version for the favorites grid, resolved from IDs stored in AsyncStorage.
+
+- **UseCases/**
+  - **GetPokemonListUseCase.ts** — Gets injected IRepoPokemon. The class GetPokemonListUseCase implements IGetPokemonListUseCase. Its method getPokemonList(offset, limit) calls the repo, maps each result into a PokemonListDto and returns the array along with a hasMore boolean.
+  - **GetPokemonDetailUseCase.ts** — Gets injected IRepoPokemon and IRepoSpecies. The class GetPokemonDetailUseCase implements IGetPokemonDetailUseCase. Its method getPokemonDetail(id) fetches both the Pokémon detail and the species data in parallel, merges them into a PokemonDetailWithSpeciesDto and returns it.
+  - **GetEvolutionChainUseCase.ts** — Gets injected IRepoEvolution. Its method getEvolutionChain(url) calls the repo and returns the flat or tree array of EvolutionNode entities.
+  - **FilterPokemonUseCase.ts** — Gets injected IRepoType. Its method filterByType(typeName) calls the repo and returns the filtered list of PokemonListDto items matching that type.
+  - **ManageFavoritesUseCase.ts** — Gets injected IRepoFavorites and IRepoPokemon. The class ManageFavoritesUseCase implements IManageFavoritesUseCase. Its methods: toggleFavorite(id) adds or removes an ID from storage, getFavorites() retrieves IDs and resolves each to a FavoritePokemonDto by fetching name and sprite, isFavorite(id) returns a boolean, clearAll() wipes all favorites.
+  - **ComparePokemonUseCase.ts** — Gets injected IRepoPokemon. Its method comparePokemon(idA, idB) fetches both details, calculates type effectiveness and returns a PokemonCompareDto.
+
+- **Interfaces/**
+  - **IRepoPokemon.ts** — Interface with methods: getAllPokemon(offset, limit) returning Promise of Pokemon array, and getPokemonById(id) returning Promise of PokemonDetail.
+  - **IRepoEvolution.ts** — Interface with method: getEvolutionChain(url) returning Promise of EvolutionNode array.
+  - **IRepoSpecies.ts** — Interface with method: getSpeciesById(id) returning Promise of PokemonSpecies.
+  - **IRepoType.ts** — Interface with method: getPokemonByType(typeName) returning Promise of Pokemon array.
+  - **IRepoFavorites.ts** — Interface with methods: getFavoriteIds() returning Promise of number array, saveFavoriteIds(ids) returning Promise of void, and clearAll() returning Promise of void.
+  - **IGetPokemonListUseCase.ts** — Interface with method: getPokemonList(offset, limit) returning Promise of an object with items (PokemonListDto array) and hasMore (boolean).
+  - **IGetPokemonDetailUseCase.ts** — Interface with method: getPokemonDetail(id) returning Promise of PokemonDetailWithSpeciesDto.
+  - **IManageFavoritesUseCase.ts** — Interface with methods: toggleFavorite(id) returning Promise of void, getFavorites() returning Promise of FavoritePokemonDto array, isFavorite(id) returning Promise of boolean, and clearAll() returning Promise of void.
+
+#### UI/
+
+Everything the user sees and interacts with. This layer only talks to the Domain through UseCases and Zustand stores.
+
+- **Screens/** — One file per route: HomeScreen, DetailScreen, FavoritesScreen and CompareScreen. Each screen calls the relevant use case (through a store or hook) and renders the result.
+- **Components/**
+  - **common/** — Design-system primitives: Button, Card, Badge, SearchBar, SkeletonLoader, EmptyState.
+  - **pokemon/** — Domain-specific UI: PokemonCard, PokemonStats (animated bars), EvolutionChain (horizontal chain with arrows), TypeBadge (colored chip per type).
+  - **layout/** — Structural wrappers: Header, TabBar, SafeArea, BottomSheet.
+- **Navigation/** — React Navigation setup: RootNavigator (Stack), TabNavigator (Bottom Tabs) and route type definitions.
+- **Theme/** — Design tokens: colors, typography, spacing, shadows, borderRadius and a barrel index.
+- **Hooks/** — Custom hooks that bridge UI and domain: usePokemonList, usePokemonDetail, useFavorites, useDebounce. These hooks call Zustand stores internally and return the state plus actions the screens need.
+- **Stores/** — Zustand stores with Immer middleware live here since they are the UI's state management layer. They call use cases from the domain and expose reactive state to components: usePokemonStore (list, detail cache, pagination, loading, errors), useFavoritesStore (persisted favorite IDs, toggle action) and useFilterStore (search query, active type and generation filters).
+
+#### App/
+
+The entry point that wires everything together: the root App component, dependency injection setup (instantiating repos, use cases and passing them to stores), provider wrappers and global configuration.
+
+### 5.4 Dependency Flow
+
+The dependency rule is strict and goes in one direction only:
+
+```
+UI  ──depends on──▶  DOMAIN  ◀──implements──  DATA
+```
+
+The UI layer imports use case interfaces and DTOs from Domain. The Data layer imports repository interfaces and entities from Domain and provides concrete implementations. The Domain layer imports nothing from UI or Data — it only defines entities, DTOs, use cases and interfaces. This means you can swap the entire Data layer (for instance, replacing PokéAPI with a local JSON mock for testing) without touching a single line in Domain or UI.
+
+### 5.5 Data Flow (Zustand + Immer)
+
+The data flow is unidirectional and predictable. A user action in the UI triggers a store action in Zustand, which calls a use case from the Domain layer. The use case orchestrates one or more repository calls (resolved by the Data layer), transforms the results into a DTO and returns it to the store. The store then runs an Immer produce call that safely mutates a draft of the state. The new state triggers a re-render in any subscribed component.
+
+As a concrete example: the user taps the heart icon on a PokemonCard. The component calls toggleFavorite(id) on useFavoritesStore. The store calls ManageFavoritesUseCase.toggleFavorite(id), which calls IRepoFavorites.getFavoriteIds(), adds or removes the ID, then calls saveFavoriteIds() with the updated array. Control returns to the store, which updates its state through Immer. Zustand notifies subscribers and the UI re-renders with the new favorites list.
+
+### 5.6 Pokémon Store Overview
+
+The main Pokémon store manages the list of Pokémon (as PokemonListDto items), a cache of detail objects (PokemonDetailWithSpeciesDto) indexed by ID, the current pagination offset, loading flags for both the initial load and subsequent pages, a boolean tracking whether more data is available, and an error string.
+
+It exposes four actions. **fetchPokemonList** sets loading to true, calls GetPokemonListUseCase with offset 0, stores the DTO results, sets the offset to 20 and checks the hasMore flag. **fetchNextPage** guards against concurrent calls and exhausted pages, then calls the same use case with the current offset and appends the new items. **fetchPokemonDetail** checks the in-memory cache first and skips the network on a hit; otherwise it calls GetPokemonDetailUseCase and stores the resulting DTO. **clearError** resets the error string to null.
+
+All state mutations go through Immer's produce, so the code reads like direct property assignments even though every update produces a new immutable state.
+
+### 5.7 Favorites Store Overview
+
+The favorites store holds an array of favorite Pokémon IDs and exposes three actions. **toggleFavorite** calls ManageFavoritesUseCase.toggleFavorite(id), which handles the persistence logic, then refreshes the local array. **isFavorite** returns a boolean check against the current array. **clearAll** calls ManageFavoritesUseCase.clearAll() and empties the local state.
+
+This store is additionally wrapped in Zustand's persist middleware configured to use AsyncStorage with the key "pokedex-favorites", so favorites survive app restarts automatically.
+
+---
+
 ## 6. Data Model
 
 ### 6.1 Core TypeScript Interfaces
