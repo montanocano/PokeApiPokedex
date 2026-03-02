@@ -181,6 +181,7 @@ Acceptance criteria:
 |---|---|---|---|
 | Runtime | React Native + Expo | 0.73+ / SDK 50 | Fast cross-platform development, OTA updates |
 | Language | TypeScript | 5.x strict | Type safety, better DX |
+| UI Framework | Tamagui | 1.x | Optimized styled components, theme tokens, compiles to native views |
 | Global State | Zustand | 4.x | Minimal API, no boilerplate, Immer-compatible |
 | Immutability | Immer | 10.x | Safe mutations, readable code |
 | Navigation | React Navigation | 6.x | Industry standard, deep linking |
@@ -289,7 +290,7 @@ Everything the user sees and interacts with. This layer only talks to the Domain
   - **pokemon/** — Domain-specific UI: PokemonCard, PokemonStats (animated bars), EvolutionChain (horizontal chain with arrows), TypeBadge (colored chip per type).
   - **layout/** — Structural wrappers: Header, TabBar, SafeArea, BottomSheet.
 - **Navigation/** — React Navigation setup: RootNavigator (Stack), TabNavigator (Bottom Tabs) and route type definitions.
-- **Theme/** — Design tokens: colors, typography, spacing, shadows, borderRadius and a barrel index.
+- **Theme/** — Tamagui theme configuration (tamagui.config.ts) defining design tokens: colors, typography, spacing, shadows, borderRadius. Also includes a barrel index for easy imports. The Tamagui config is the single source of truth for all visual tokens, and TamaguiProvider wraps the app at the root level.
 - **Hooks/** — Custom hooks that bridge UI and domain: usePokemonList, usePokemonDetail, useFavorites, useDebounce. These hooks call Zustand stores internally and return the state plus actions the screens need.
 - **Stores/** — Zustand stores with Immer middleware live here since they are the UI's state management layer. They call use cases from the domain and expose reactive state to components: usePokemonStore (list, detail cache, pagination, loading, errors), useFavoritesStore (persisted favorite IDs, toggle action) and useFilterStore (search query, active type and generation filters).
 
@@ -357,6 +358,8 @@ PokemonListItem has a one-to-many relationship with PokemonType. Fetching by ID 
 
 ---
 ## 7. Design System
+
+All design tokens below are defined in the Tamagui configuration file (tamagui.config.ts) and consumed across the app through Tamagui's theme system. Components access these values via Tamagui's styled() API and the useTheme() hook, which means a single config change propagates everywhere automatically.
 
 ### 7.1 Color Palette
 
@@ -645,6 +648,7 @@ The development is split into 4 phases. Each delivers functional value and is po
 | Task | Priority | Estimate |
 |---|---|---|
 | Project setup with Expo + TypeScript + ESLint + Prettier | P0 | 4h |
+| Configure Tamagui: create tamagui.config.ts, set up TamaguiProvider in App.tsx, test basic component | P0 | 3h |
 | Configure React Navigation (Stack + Tab) | P0 | 3h |
 | Build theme system (colors, typography, spacing) | P0 | 3h |
 | Implement pokeApiClient with Axios | P0 | 2h |
