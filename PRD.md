@@ -16,7 +16,7 @@
 7. [Design System](#7-design-system)
 8. [User Flows & Wireframes](#8-user-flows--wireframes)
 9. [API Integration Specs](#9-api-integration-specs)
-10. [Development Phases](#10-development-phases-roadmap)
+10. [Development Phases](#10-development-phases)
 
 ---
 
