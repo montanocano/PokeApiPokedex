@@ -22,7 +22,7 @@
 
 ## 1. Executive Summary
 
-The Pokédex App is a application built with React Native. It lets users explore, search and manage detailed information on the 1,025+ Pokémon available today. The app connects to PokéAPI as its primary data source and relies on Zustand combined with Immer for reactive, immutable state management.
+The Pokédex App is a application built with React Native. It lets users explore, search and manage detailed information on all available Pokémon in the PokéAPI. The app connects to PokéAPI as its primary data source and relies on Zustand combined with Immer for reactive, immutable state management.
 
 | Aspect | Detail |
 |---|---|
