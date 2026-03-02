@@ -457,7 +457,7 @@ Three levels are defined. The small shadow uses a 1px vertical offset with 0.05 
 │  │  └─────┘    │ │  └─────┘    │ │  ◄── Pokémon Grid
 │  │ #001       ♥ │ │ #002       ♥ │ │
 │  │ Bulbasaur    │ │ Ivysaur      │ │
-│  │ [Grass][Poi] │ │ [Grass][Poi] │ │
+│  │ [Grass][Psn] │ │ [Grass][Psn] │ │
 │  └─────────────┘ └─────────────┘ │
 │                                  │
 │  ┌─────────────┐ ┌─────────────┐ │
@@ -466,7 +466,7 @@ Three levels are defined. The small shadow uses a 1px vertical offset with 0.05 
 │  │  └─────┘    │ │  └─────┘    │ │
 │  │ #003       ♥ │ │ #004       ♥ │ │
 │  │ Venusaur     │ │ Charmander   │ │
-│  │ [Grass][Poi] │ │ [Fire]       │ │
+│  │ [Grass][Psn] │ │ [Fire]       │ │
 │  └─────────────┘ └─────────────┘ │
 │                                  │
 ├──────────────────────────────────┤
@@ -513,14 +513,14 @@ Three levels are defined. The small shadow uses a 1px vertical offset with 0.05 
 │                                  │
 │  ┌────────┐┌────────┐┌────────┐  │
 │  │ [IMG]  ││ [IMG]  ││ [IMG]  │  │
-│  │ #025   ││ #006   ││ #150   │  │  ◄── 3-column grid
-│  │Pikachu ││Chariza ││Mewtwo  │  │
+│  │ #025 ││ #006 ││ #150│   │  ◄── 3-column grid
+│  │Pikachu ││Charizard││Mewtwo │  │
 │  └────────┘└────────┘└────────┘  │
 │                                  │
 │  ┌────────┐┌────────┐┌────────┐  │
 │  │ [IMG]  ││ [IMG]  ││ [IMG]  │  │
-│  │ #094   ││ #130   ││ #149   │  │
-│  │Gengar  ││Gyarado ││Dragnit │  │
+│  │ #094 ││ #130 ││ #149│   │
+│  │Gengar  ││Gyarados││Dragnite│  │
 │  └────────┘└────────┘└────────┘  │
 │                                  │
 ├──────────────────────────────────┤
