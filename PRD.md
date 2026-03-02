@@ -30,7 +30,7 @@ The Pokédex App is an application built with React Native. It lets users explor
 | Framework | React Native 0.73+ with Expo SDK 50+ |
 | Global State | Zustand 4.x + Immer middleware |
 | Data Source | PokéAPI v2 (REST, free, no authentication) |
-| Language | TypeScript 5.x in strict mode |
+| Language | TypeScript 5.9+ in strict mode |
 | Navigation | React Navigation 6.x |
 | Dev Environment | Visual Studio Code |
 | Purpose | Portfolio project · Demonstrates technical competence |

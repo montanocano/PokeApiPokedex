@@ -1,50 +1,108 @@
-# Welcome to your Expo app 👋
+# Instalaciones previas
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Guía paso a paso para configurar el entorno de desarrollo del proyecto React Native (Android y Web únicamente).
 
-## Get started
+## Requisitos Previos
 
-1. Install dependencies
+- Sistema operativo: Windows 10+, macOS 12+ o Linux (Ubuntu 20.04+)
+- Mínimo 8 GB de RAM (recomendado 16 GB)
+- Al menos 20 GB de espacio libre en disco
 
-   ```bash
-   npm install
-   ```
+## 1. Instalar Node.js (v18+)
 
-2. Start the app
+Descargar el instalador desde https://nodejs.org/ (versión LTS 18 o superior) y seguir el asistente de instalación.
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Verificar la instalación
 
 ```bash
-npm run reset-project
+node --version   # Debe mostrar v18.x.x o superior
+npm --version    # Debe mostrar 9.x.x o superior
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 2. Instalar Expo (ÚNICA opción permitida)
 
-## Learn more
+Este proyecto utiliza Expo y es la única opción de desarrollo soportada.
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm install -g expo-cli
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Verificar instalación:
 
-## Join the community
+```bash
+expo --version
+```
 
-Join our community of developers creating universal apps.
+## 3. Configurar Android Studio y Emulador
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Necesario únicamente para ejecutar la app en Android.
+
+1. Descargar e instalar https://developer.android.com/studio
+2. Durante la instalación, asegurarse de marcar:
+   - Android SDK
+   - Android SDK Platform
+   - Android Virtual Device (AVD)
+3. Abrir Android Studio → More Actions → SDK Manager
+4. En SDK Platforms, instalar:
+   - Android 14 (API 34) o la versión más reciente
+5. En SDK Tools, verificar que estén instalados:
+   - Android SDK Build-Tools
+   - Android Emulator
+   - Android SDK Platform-Tools
+6. Configurar variables de entorno (`~/.bashrc`, `~/.zshrc` o equivalente):
+
+```bash
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+
+7. Crear un emulador:
+   - Android Studio → More Actions → Virtual Device Manager
+   - Create Device
+   - Seleccionar dispositivo (ej. Pixel 7)
+   - Seleccionar imagen del sistema (API 34)
+   - Finalizar y ejecutar
+
+### Verificar el emulador
+
+```bash
+adb devices   # Debe mostrar el emulador en la lista
+```
+
+## 4. Instalar Extensiones de VSCode
+
+Instalar Visual Studio Code y añadir:
+
+| Extensión | ID | Descripción |
+|---|---|---|
+| ESLint | `dbaeumer.vscode-eslint` | Linter para JavaScript/TypeScript |
+| Prettier | `esbenp.prettier-vscode` | Formateador de código |
+| React Native Tools | `msjsdiag.vscode-react-native` | Depuración |
+
+Instalación por terminal:
+
+```bash
+code --install-extension dbaeumer.vscode-eslint
+code --install-extension esbenp.prettier-vscode
+code --install-extension msjsdiag.vscode-react-native
+```
+
+## 5. Iniciar el Proyecto (Android y Web)
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/montanocano/PokeApiPokedex
+cd PokeApiPokedex
+
+# Instalar dependencias
+npm install
+
+# Iniciar Expo
+npx expo start
+```
+
+Una vez iniciado:
+
+- Presionar **a** → Ejecutar en emulador Android
+- Presionar **w** → Ejecutar en navegador (Web)
