@@ -92,8 +92,8 @@ code --install-extension msjsdiag.vscode-react-native
 
 ```bash
 # Clonar el repositorio
-git clone <URL_DEL_REPOSITORIO>
-cd <nombre-del-proyecto>
+git clone https://github.com/montanocano/PokeApiPokedex
+cd PokeApiPokedex
 
 # Instalar dependencias
 npm install
