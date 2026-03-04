@@ -1,80 +1,67 @@
-import axios, {
-  AxiosInstance,
-  AxiosResponse,
-  AxiosError,
-} from "axios";
+import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import { ApiString } from "./apiString";
 
-//Custom error types
+// errores custom para manejar los distintos fallos de red
+// asi en el UI podemos mostrar mensajes diferentes segun el error
 
 export class ApiTimeoutError extends Error {
-  constructor(message = "Connection timed out. Please try again.") {
-    super(message);
+  constructor() {
+    super("Se agotó el tiempo de conexión. Intenta de nuevo.");
     this.name = "ApiTimeoutError";
   }
 }
 
 export class ApiNetworkError extends Error {
-  constructor(message = "No internet connection. Please check your network.") {
-    super(message);
+  constructor() {
+    super("No hay conexión a internet. Revisa tu red.");
     this.name = "ApiNetworkError";
   }
 }
 
 export class ApiHttpError extends Error {
-  public readonly statusCode: number;
-  public readonly statusText: string;
+  statusCode: number;
 
-  constructor(statusCode: number, statusText: string, message?: string) {
-    super(message ?? `HTTP Error ${statusCode}: ${statusText}`);
+  constructor(statusCode: number, statusText: string) {
+    super(`Error HTTP ${statusCode}: ${statusText}`);
     this.name = "ApiHttpError";
     this.statusCode = statusCode;
-    this.statusText = statusText;
   }
 }
 
-//Client configuration
+// timeout de 10 seg como dice el PRD
+const TIMEOUT = 10000;
 
-const DEFAULT_TIMEOUT = 10_000; // 10 seconds
-
-/**
- * Creates and configures the Axios instance used across the entire app.
- *
- * Features:
- * - Base URL pointing to PokéAPI v2
- * - Global 10-second timeout
- * - Accept: application/json header
- * - Response interceptor that unwraps data and normalises errors
- */
-function createApiClient(): AxiosInstance {
+function createClient(): AxiosInstance {
   const client = axios.create({
     baseURL: ApiString.getAPIBase(),
-    timeout: DEFAULT_TIMEOUT,
+    timeout: TIMEOUT,
     headers: {
       Accept: "application/json",
     },
   });
 
-  //Response interceptor
-  // On success  → unwrap the Axios response and return `response.data` directly.
-  // On failure  → classify the error into one of our custom types.
+  // interceptor de respuesta
+  // en success -> devolvemos solo el .data para no tener que hacer res.data todo el rato
+  // en error -> lo clasificamos en nuestros errores custom
   client.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     (error: AxiosError) => {
-      // Timeout (ECONNABORTED)
+      // timeout
       if (error.code === "ECONNABORTED") {
         return Promise.reject(new ApiTimeoutError());
       }
 
-      // No response at all → network issue
+      // no hay respuesta del servidor -> problema de red
       if (!error.response) {
         return Promise.reject(new ApiNetworkError());
       }
 
-      // Standard HTTP error
-      const { status, statusText } = error.response;
+      // error http normal (404, 500, etc)
       return Promise.reject(
-        new ApiHttpError(status, statusText ?? "Unknown error")
+        new ApiHttpError(
+          error.response.status,
+          error.response.statusText || "Error desconocido"
+        )
       );
     }
   );
@@ -82,4 +69,5 @@ function createApiClient(): AxiosInstance {
   return client;
 }
 
-export const apiClient: AxiosInstance = createApiClient();
+// exportamos una sola instancia para toda la app
+export const apiClient = createClient();
