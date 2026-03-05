@@ -1,5 +1,4 @@
-// url base de la pokeapi
-// si algún dia cambia solo hay que tocar aqui
+// base url for the pokeapi
 
 export class ApiString {
   private static readonly BASE_URL = "https://pokeapi.co/api/v2";
