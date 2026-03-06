@@ -17,4 +17,4 @@ export type {
   PokemonDetailResponse,
 } from "./Types";
 
-export { isPokemonTypeName } from "./Types";
+export { isPokemonTypeName, POKEMON_TYPE_NAMES } from "./Types";

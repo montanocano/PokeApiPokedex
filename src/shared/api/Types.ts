@@ -1,13 +1,12 @@
-// tipos para las respuestas de la PokeAPI
-// sacados de https://pokeapi.co/docs/v2
+// types for the pokeapi responses
 
-// esto lo usa la api en todos lados, es como una referencia con nombre y url
+// the api uses this everywhere, its like a reference with name and url
 export interface NamedAPIResource {
   name: string;
   url: string;
 }
 
-// respuesta paginada genérica (GET /pokemon, GET /type, etc)
+// generic paginated response (GET /pokemon, GET /type, etc)
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
@@ -15,28 +14,16 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
-// los 18 tipos de pokemon
-export type PokemonTypeName =
-  | "normal"
-  | "fire"
-  | "water"
-  | "electric"
-  | "grass"
-  | "ice"
-  | "fighting"
-  | "poison"
-  | "ground"
-  | "flying"
-  | "psychic"
-  | "bug"
-  | "rock"
-  | "ghost"
-  | "dragon"
-  | "dark"
-  | "steel"
-  | "fairy";
+// the 18 pokemon types - using a const tuple so we can derive both the type and the guard from it
+export const POKEMON_TYPE_NAMES = [
+  "normal", "fire", "water", "electric", "grass", "ice",
+  "fighting", "poison", "ground", "flying", "psychic", "bug",
+  "rock", "ghost", "dragon", "dark", "steel", "fairy",
+] as const;
 
-// cada pokemon tiene 1 o 2 tipos, esto es como viene en el array types
+export type PokemonTypeName = (typeof POKEMON_TYPE_NAMES)[number];
+
+// each pokemon has 1 or 2 types, this is how it comes in the types array
 export interface PokemonTypeEntry {
   slot: number;
   type: NamedAPIResource;
@@ -64,7 +51,7 @@ export interface PokemonAbility {
   slot: number;
 }
 
-// sprites - solo los que vamos a usar
+// sprites - only the ones we actually need
 export interface PokemonSprites {
   front_default: string | null;
   front_shiny: string | null;
@@ -80,7 +67,7 @@ export interface PokemonSprites {
   };
 }
 
-// moves (solo vamos a mostrar los primeros 20)
+// moves (we only show the first 20)
 export interface PokemonMove {
   move: NamedAPIResource;
   version_group_details: {
@@ -90,12 +77,12 @@ export interface PokemonMove {
   }[];
 }
 
-// interfaz principal - respuesta de GET /pokemon/{id}
+// main pokemon interface - response from GET /pokemon/{id}
 export interface Pokemon {
   id: number;
   name: string;
-  height: number; // en decímetros
-  weight: number; // en hectogramos
+  height: number; // in decimeters
+  weight: number; // in hectograms
   base_experience: number;
   types: PokemonTypeEntry[];
   stats: PokemonStat[];
@@ -108,16 +95,10 @@ export interface Pokemon {
 // GET /pokemon?offset=0&limit=30
 export type PokemonListResponse = PaginatedResponse<NamedAPIResource>;
 
-// GET /pokemon/{id} - es lo mismo que Pokemon pero queda más claro al usarlo
+// GET /pokemon/{id} - same as Pokemon but makes it clearer when reading the code
 export type PokemonDetailResponse = Pokemon;
 
-// type guard por si acaso - para validar que un string es un tipo valido
-const validTypes: PokemonTypeName[] = [
-  "normal", "fire", "water", "electric", "grass", "ice",
-  "fighting", "poison", "ground", "flying", "psychic", "bug",
-  "rock", "ghost", "dragon", "dark", "steel", "fairy",
-];
-
+// type guard - derives from the same tuple so theres no duplication
 export function isPokemonTypeName(value: string): value is PokemonTypeName {
-  return validTypes.includes(value as PokemonTypeName);
+  return (POKEMON_TYPE_NAMES as readonly string[]).includes(value);
 }
