@@ -83,7 +83,7 @@ export interface Pokemon {
   name: string;
   height: number; // in decimeters
   weight: number; // in hectograms
-  base_experience: number;
+  base_experience: number | null;
   types: PokemonTypeEntry[];
   stats: PokemonStat[];
   abilities: PokemonAbility[];
