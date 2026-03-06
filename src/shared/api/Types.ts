@@ -15,26 +15,14 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
-// the 18 pokemon types
-export type PokemonTypeName =
-  | "normal"
-  | "fire"
-  | "water"
-  | "electric"
-  | "grass"
-  | "ice"
-  | "fighting"
-  | "poison"
-  | "ground"
-  | "flying"
-  | "psychic"
-  | "bug"
-  | "rock"
-  | "ghost"
-  | "dragon"
-  | "dark"
-  | "steel"
-  | "fairy";
+// the 18 pokemon types - using a const tuple so we can derive both the type and the guard from it
+export const POKEMON_TYPE_NAMES = [
+  "normal", "fire", "water", "electric", "grass", "ice",
+  "fighting", "poison", "ground", "flying", "psychic", "bug",
+  "rock", "ghost", "dragon", "dark", "steel", "fairy",
+] as const;
+
+export type PokemonTypeName = (typeof POKEMON_TYPE_NAMES)[number];
 
 // each pokemon has 1 or 2 types, this is how it comes in the types array
 export interface PokemonTypeEntry {
@@ -96,7 +84,7 @@ export interface Pokemon {
   name: string;
   height: number; // in decimeters
   weight: number; // in hectograms
-  base_experience: number;
+  base_experience: number | null;
   types: PokemonTypeEntry[];
   stats: PokemonStat[];
   abilities: PokemonAbility[];
@@ -111,13 +99,7 @@ export type PokemonListResponse = PaginatedResponse<NamedAPIResource>;
 // GET /pokemon/{id} - same as Pokemon but makes it clearer when reading the code
 export type PokemonDetailResponse = Pokemon;
 
-// type guard just in case - to check if a string is a valid type
-const validTypes: PokemonTypeName[] = [
-  "normal", "fire", "water", "electric", "grass", "ice",
-  "fighting", "poison", "ground", "flying", "psychic", "bug",
-  "rock", "ghost", "dragon", "dark", "steel", "fairy",
-];
-
+// type guard - derives from the same tuple so theres no duplication
 export function isPokemonTypeName(value: string): value is PokemonTypeName {
-  return validTypes.includes(value as PokemonTypeName);
+  return (POKEMON_TYPE_NAMES as readonly string[]).includes(value);
 }

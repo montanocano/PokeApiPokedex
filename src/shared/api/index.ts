@@ -25,3 +25,4 @@ export {
   getPokemonByType,
   extractIdFromUrl,
 } from "./PokemonService";
+export { isPokemonTypeName, POKEMON_TYPE_NAMES } from "./Types";
