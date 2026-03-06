@@ -1,19 +1,18 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from "axios";
 import { ApiString } from "./apiString";
 
-// errores custom para manejar los distintos fallos de red
-// asi en el UI podemos mostrar mensajes diferentes segun el error
+// custom errors so we can show different messages in the UI
 
 export class ApiTimeoutError extends Error {
   constructor() {
-    super("Se agotó el tiempo de conexión. Intenta de nuevo.");
+    super("Connection timed out. Please try again.");
     this.name = "ApiTimeoutError";
   }
 }
 
 export class ApiNetworkError extends Error {
   constructor() {
-    super("No hay conexión a internet. Revisa tu red.");
+    super("No internet connection. Check your network.");
     this.name = "ApiNetworkError";
   }
 }
@@ -22,16 +21,25 @@ export class ApiHttpError extends Error {
   statusCode: number;
 
   constructor(statusCode: number, statusText: string) {
-    super(`Error HTTP ${statusCode}: ${statusText}`);
+    super(`HTTP Error ${statusCode}: ${statusText}`);
     this.name = "ApiHttpError";
     this.statusCode = statusCode;
   }
 }
 
-// timeout de 10 seg como dice el PRD
+// typed wrapper so callers get T directly instead of AxiosResponse<T>
+// because our interceptor already unwraps response.data
+export interface ApiClient {
+  get<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
+  post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
+  put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
+  delete<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
+}
+
+// 10 sec timeout like the PRD says
 const TIMEOUT = 10000;
 
-function createClient(): AxiosInstance {
+function createClient(): ApiClient {
   const client = axios.create({
     baseURL: ApiString.getAPIBase(),
     timeout: TIMEOUT,
@@ -40,9 +48,9 @@ function createClient(): AxiosInstance {
     },
   });
 
-  // interceptor de respuesta
-  // en success -> devolvemos solo el .data para no tener que hacer res.data todo el rato
-  // en error -> lo clasificamos en nuestros errores custom
+  // response interceptor
+  // on success -> return just .data so we dont have to do res.data everywhere
+  // on error -> classify it into our custom errors
   client.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     (error: AxiosError) => {
@@ -51,23 +59,24 @@ function createClient(): AxiosInstance {
         return Promise.reject(new ApiTimeoutError());
       }
 
-      // no hay respuesta del servidor -> problema de red
+      // no response from server -> network problem
       if (!error.response) {
         return Promise.reject(new ApiNetworkError());
       }
 
-      // error http normal (404, 500, etc)
+      // regular http error (404, 500, etc)
       return Promise.reject(
         new ApiHttpError(
           error.response.status,
-          error.response.statusText || "Error desconocido"
+          error.response.statusText || "Unknown error"
         )
       );
     }
   );
 
-  return client;
+  // cast to our wrapper type since the interceptor changes the return type
+  return client as unknown as ApiClient;
 }
 
-// exportamos una sola instancia para toda la app
+// single instance for the whole app
 export const apiClient = createClient();
