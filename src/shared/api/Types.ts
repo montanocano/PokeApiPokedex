@@ -1,4 +1,5 @@
 // types for the pokeapi responses
+// based on https://pokeapi.co/docs/v2
 
 // the api uses this everywhere, its like a reference with name and url
 export interface NamedAPIResource {

@@ -17,4 +17,12 @@ export type {
   PokemonDetailResponse,
 } from "./Types";
 
+export { isPokemonTypeName } from "./Types";
+
+export {
+  getPokemonList,
+  getPokemonById,
+  getPokemonByType,
+  extractIdFromUrl,
+} from "./PokemonService";
 export { isPokemonTypeName, POKEMON_TYPE_NAMES } from "./Types";
