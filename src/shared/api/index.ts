@@ -32,3 +32,5 @@ export {
   getPokemonByType,
   extractIdFromUrl,
 } from "./PokemonService";
+
+export { getPokemonDetail, parsePokemonDetail } from "./pokemonDetailService";
