@@ -149,7 +149,7 @@ export interface PokemonDetail {
   name: string;
   height: number;
   weight: number;
-  baseExperience: number;
+  baseExperience: number; // defaults to 0 if the api returns null
   types: PokemonTypeName[];
   stats: ParsedStat[];
   abilities: ParsedAbility[];
