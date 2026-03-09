@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from "axios";
 import { ApiString } from "./apiString";
 
 // custom errors so we can show different messages in the UI
@@ -27,10 +27,19 @@ export class ApiHttpError extends Error {
   }
 }
 
-// 10 sec timeout
+// typed wrapper so callers get T directly instead of AxiosResponse<T>
+// because our interceptor already unwraps response.data
+export interface ApiClient {
+  get<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
+  post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
+  put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
+  delete<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
+}
+
+// 10 sec timeout like the PRD says
 const TIMEOUT = 10000;
 
-function createClient(): AxiosInstance {
+function createClient(): ApiClient {
   const client = axios.create({
     baseURL: ApiString.getAPIBase(),
     timeout: TIMEOUT,
@@ -65,7 +74,8 @@ function createClient(): AxiosInstance {
     }
   );
 
-  return client;
+  // cast to our wrapper type since the interceptor changes the return type
+  return client as unknown as ApiClient;
 }
 
 // single instance for the whole app

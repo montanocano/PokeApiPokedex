@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { PokemonListResponse, Pokemon, PokemonTypeName } from "./Types";
+import type { PokemonListResponse, Pokemon, PokemonTypeName, TypeDetailResponse } from "./Types";
 
 // service for pokemon list related api calls
 // for now just list and types, we'll add more stuff later
@@ -8,10 +8,10 @@ import type { PokemonListResponse, Pokemon, PokemonTypeName } from "./Types";
 // offset = where to start, limit = how many to fetch
 export async function getPokemonList(
   offset: number = 0,
-  limit: number = 30
+  limit: number = 20
 ): Promise<PokemonListResponse> {
   try {
-    const data = await apiClient.get<any, PokemonListResponse>("/pokemon", {
+    const data = await apiClient.get<PokemonListResponse>("/pokemon", {
       params: { offset, limit },
     });
     return data;
@@ -25,25 +25,12 @@ export async function getPokemonList(
 // get a single pokemon by id (we need this to get sprites and types for each one)
 export async function getPokemonById(id: number | string): Promise<Pokemon> {
   try {
-    const data = await apiClient.get<any, Pokemon>(`/pokemon/${id}`);
+    const data = await apiClient.get<Pokemon>(`/pokemon/${id}`);
     return data;
   } catch (error) {
     console.error(`Error getting pokemon ${id}:`, error);
     throw error;
   }
-}
-
-// response from GET /type/{name} - only typing what we need
-interface TypeDetailResponse {
-  id: number;
-  name: string;
-  pokemon: {
-    pokemon: {
-      name: string;
-      url: string;
-    };
-    slot: number;
-  }[];
 }
 
 // get all pokemon of a specific type
@@ -52,7 +39,7 @@ export async function getPokemonByType(
   typeName: PokemonTypeName
 ): Promise<TypeDetailResponse> {
   try {
-    const data = await apiClient.get<any, TypeDetailResponse>(
+    const data = await apiClient.get<TypeDetailResponse>(
       `/type/${typeName}`
     );
     return data;

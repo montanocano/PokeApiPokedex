@@ -108,6 +108,7 @@ npx expo install tamagui @tamagui/config
 
 ### Zustand (State Management)
 
+# Iniciar Expo
 ```bash
 npx expo install zustand
 ```
