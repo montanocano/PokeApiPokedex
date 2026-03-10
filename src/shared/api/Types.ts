@@ -103,10 +103,7 @@ export interface TypeDetailResponse {
   id: number;
   name: string;
   pokemon: {
-    pokemon: {
-      name: string;
-      url: string;
-    };
+    pokemon: NamedAPIResource;
     slot: number;
   }[];
 }
