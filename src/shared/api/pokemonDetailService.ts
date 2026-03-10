@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import { extractIdFromUrl } from "./PokemonService";
 import type { Pokemon, PokemonDetail, ParsedStat, ParsedAbility, ParsedSprites, ParsedMove } from "./Types";
 
 // service for the pokemon detail screen
@@ -53,9 +54,7 @@ function parsePokemonDetail(raw: Pokemon): PokemonDetail {
     height: raw.height,
     weight: raw.weight,
     baseExperience: raw.base_experience ?? 0,
-    types: raw.types
-      .map((t) => t.type.name)
-      .filter((name): name is PokemonDetail["types"][number] => typeof name === "string"),
+    types: raw.types.map((t) => t.type.name) as PokemonDetail["types"],
     stats: parseStats(raw),
     abilities: parseAbilities(raw),
     sprites: parseSprites(raw),
