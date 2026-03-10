@@ -1,4 +1,5 @@
 export { apiClient } from "./client";
+export type { ApiClient } from "./client";
 export { ApiString } from "./apiString";
 export { ApiTimeoutError, ApiNetworkError, ApiHttpError } from "./client";
 
@@ -15,6 +16,19 @@ export type {
   Pokemon,
   PokemonListResponse,
   PokemonDetailResponse,
+  TypeDetailResponse,
+  PokemonDetail,
+  ParsedStat,
+  ParsedAbility,
+  ParsedSprites,
+  ParsedMove,
 } from "./Types";
 
 export { isPokemonTypeName, POKEMON_TYPE_NAMES } from "./Types";
+
+export {
+  getPokemonList,
+  getPokemonById,
+  getPokemonByType,
+  extractIdFromUrl,
+} from "./PokemonService";

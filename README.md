@@ -1,55 +1,55 @@
-# Instalaciones previas
+# Prerequisites & Setup
 
-Guía paso a paso para configurar el entorno de desarrollo del proyecto React Native (Android y Web únicamente).
+Step-by-step guide to set up the development environment for the React Native project (Android and Web only).
 
-## Requisitos Previos
+## System Requirements
 
-- Sistema operativo: Windows 10+, macOS 12+ o Linux (Ubuntu 20.04+)
-- Mínimo 8 GB de RAM (recomendado 16 GB)
-- Al menos 20 GB de espacio libre en disco
+- Operating system: Windows 10+, macOS 12+, or Linux (Ubuntu 20.04+)
+- Minimum 8 GB of RAM (16 GB recommended)
+- At least 20 GB of free disk space
 
-## 1. Instalar Node.js (v18+)
+## 1. Install Node.js (v18+)
 
-Descargar el instalador desde https://nodejs.org/ (versión LTS 18 o superior) y seguir el asistente de instalación.
+Download the installer from https://nodejs.org/ (LTS version 18 or higher) and follow the installation wizard.
 
-### Verificar la instalación
+### Verify installation
 
 ```bash
-node --version   # Debe mostrar v18.x.x o superior
-npm --version    # Debe mostrar 9.x.x o superior
+node --version   # Should display v18.x.x or higher
+npm --version    # Should display 9.x.x or higher
 ```
 
-## 2. Instalar Expo (ÚNICA opción permitida)
+## 2. Install Expo (ONLY supported option)
 
-Este proyecto utiliza Expo y es la única opción de desarrollo soportada.
+This project uses Expo and it is the only supported development option.
 
 ```bash
 npm install -g expo-cli
 ```
 
-Verificar instalación:
+Verify installation:
 
 ```bash
 expo --version
 ```
 
-## 3. Configurar Android Studio y Emulador
+## 3. Set Up Android Studio and Emulator
 
-Necesario únicamente para ejecutar la app en Android.
+Required only to run the app on Android.
 
-1. Descargar e instalar https://developer.android.com/studio
-2. Durante la instalación, asegurarse de marcar:
+1. Download and install https://developer.android.com/studio
+2. During installation, make sure to check:
    - Android SDK
    - Android SDK Platform
    - Android Virtual Device (AVD)
-3. Abrir Android Studio → More Actions → SDK Manager
-4. En SDK Platforms, instalar:
-   - Android 14 (API 34) o la versión más reciente
-5. En SDK Tools, verificar que estén instalados:
+3. Open Android Studio → More Actions → SDK Manager
+4. In SDK Platforms, install:
+   - Android 14 (API 34) or the latest version
+5. In SDK Tools, verify the following are installed:
    - Android SDK Build-Tools
    - Android Emulator
    - Android SDK Platform-Tools
-6. Configurar variables de entorno (`~/.bashrc`, `~/.zshrc` o equivalente):
+6. Set up environment variables (`~/.bashrc`, `~/.zshrc`, or equivalent):
 
 ```bash
 export ANDROID_HOME=$HOME/Android/Sdk
@@ -57,30 +57,30 @@ export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 ```
 
-7. Crear un emulador:
+7. Create an emulator:
    - Android Studio → More Actions → Virtual Device Manager
    - Create Device
-   - Seleccionar dispositivo (ej. Pixel 7)
-   - Seleccionar imagen del sistema (API 34)
-   - Finalizar y ejecutar
+   - Select a device (e.g., Pixel 7)
+   - Select system image (API 34)
+   - Finish and run
 
-### Verificar el emulador
+### Verify the emulator
 
 ```bash
-adb devices   # Debe mostrar el emulador en la lista
+adb devices   # Should show the emulator in the list
 ```
 
-## 4. Instalar Extensiones de VSCode
+## 4. Install VSCode Extensions
 
-Instalar Visual Studio Code y añadir:
+Install Visual Studio Code and add the following:
 
-| Extensión | ID | Descripción |
+| Extension | ID | Description |
 |---|---|---|
-| ESLint | `dbaeumer.vscode-eslint` | Linter para JavaScript/TypeScript |
-| Prettier | `esbenp.prettier-vscode` | Formateador de código |
-| React Native Tools | `msjsdiag.vscode-react-native` | Depuración |
+| ESLint | `dbaeumer.vscode-eslint` | JavaScript/TypeScript linter |
+| Prettier | `esbenp.prettier-vscode` | Code formatter |
+| React Native Tools | `msjsdiag.vscode-react-native` | Debugging tools |
 
-Instalación por terminal:
+Install via terminal:
 
 ```bash
 code --install-extension dbaeumer.vscode-eslint
@@ -88,21 +88,44 @@ code --install-extension esbenp.prettier-vscode
 code --install-extension msjsdiag.vscode-react-native
 ```
 
-## 5. Iniciar el Proyecto (Android y Web)
+## 5. Clone and Install the Project
 
 ```bash
-# Clonar el repositorio
+# Clone the repository
 git clone https://github.com/montanocano/PokeApiPokedex
 cd PokeApiPokedex
 
-# Instalar dependencias
+# Install dependencies
 npm install
+```
+
+## 6. Install Additional Libraries
+
+### Tamagui (UI Framework)
+
+```bash
+npx expo install tamagui @tamagui/config
+
+### Zustand (State Management)
 
 # Iniciar Expo
+```bash
+npx expo install zustand
+```
+
+### Axios (HTTP Client)
+
+```bash
+npx expo install axios
+```
+
+## 7. Start the Project (Android and Web)
+
+```bash
 npx expo start
 ```
 
-Una vez iniciado:
+Once started:
 
-- Presionar **a** → Ejecutar en emulador Android
-- Presionar **w** → Ejecutar en navegador (Web)
+- Press **a** → Run on Android emulator
+- Press **w** → Run in browser (Web)

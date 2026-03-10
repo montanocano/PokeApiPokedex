@@ -98,7 +98,59 @@ export type PokemonListResponse = PaginatedResponse<NamedAPIResource>;
 // GET /pokemon/{id} - same as Pokemon but makes it clearer when reading the code
 export type PokemonDetailResponse = Pokemon;
 
+// GET /type/{name} - response with all pokemon of that type
+export interface TypeDetailResponse {
+  id: number;
+  name: string;
+  pokemon: {
+    pokemon: NamedAPIResource;
+    slot: number;
+  }[];
+}
+
 // type guard - derives from the same tuple so theres no duplication
 export function isPokemonTypeName(value: string): value is PokemonTypeName {
   return (POKEMON_TYPE_NAMES as readonly string[]).includes(value);
+}
+
+// --- parsed types (camelCase) for the detail screen ---
+// the api returns snake_case so we transform it into these
+
+export interface ParsedStat {
+  baseStat: number;
+  effort: number;
+  statName: string;
+}
+
+export interface ParsedAbility {
+  abilityName: string;
+  isHidden: boolean;
+  slot: number;
+}
+
+export interface ParsedSprites {
+  frontDefault: string | null;
+  frontShiny: string | null;
+  officialArtwork: string | null;
+  home: string | null;
+}
+
+export interface ParsedMove {
+  moveName: string;
+  levelLearnedAt: number;
+  learnMethod: string;
+}
+
+export interface PokemonDetail {
+  id: number;
+  name: string;
+  height: number;
+  weight: number;
+  baseExperience: number; // defaults to 0 if the api returns null
+  types: PokemonTypeName[];
+  stats: ParsedStat[];
+  abilities: ParsedAbility[];
+  sprites: ParsedSprites;
+  moves: ParsedMove[];
+  speciesUrl: string;
 }
