@@ -2,7 +2,7 @@ import React from "react";
 import { SafeAreaView } from "react-native";
 import { YStack, XStack, Text, Button, styled, getTokens } from "tamagui";
 
-//Styled card using Tamagui's styled() API
+// Styled card using Tamagui's styled() API
 const Card = styled(YStack, {
   backgroundColor: "$surface",
   borderRadius: "$md",
@@ -34,7 +34,7 @@ const TypeBadge = styled(XStack, {
   } as const,
 });
 
-//Test screen
+// Test screen
 // This screen exists only to verify that Tamagui is configured
 // correctly: tokens resolve, styled() works, themes apply.
 // It can be deleted once the real HomeScreen is in place.

@@ -3,7 +3,7 @@ import { extractIdFromUrl } from "./PokemonService";
 import { type Pokemon, type PokemonDetail, type ParsedStat, type ParsedAbility, type ParsedSprites, type ParsedMove, isPokemonTypeName } from "./Types";
 
 // service for the pokemon detail screen
-// fetches the raw data and parses it into camelCase so the UI doesnt have to deal with snake_case
+// fetches the raw data and parses it into camelCase so the UI doesn't have to deal with snake_case
 
 // parse the stats array from the api response
 function parseStats(raw: Pokemon): ParsedStat[] {
