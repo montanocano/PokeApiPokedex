@@ -53,9 +53,9 @@ function parsePokemonDetail(raw: Pokemon): PokemonDetail {
     height: raw.height,
     weight: raw.weight,
     baseExperience: raw.base_experience ?? 0,
-    types: raw.types
-      .map((t) => t.type.name)
-      .filter((name): name is PokemonDetail["types"][number] => typeof name === "string"),
+types: raw.types
+  .map((t) => t.type.name)
+  .filter(isPokemonTypeName),
     stats: parseStats(raw),
     abilities: parseAbilities(raw),
     sprites: parseSprites(raw),
