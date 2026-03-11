@@ -43,7 +43,12 @@ jobs:
 
       - run: npm ci
 
-      - run: npx tsc --noEmit
+      - uses: reviewdog/action-setup@v1
+
+      - name: tsc with reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx tsc --noEmit --pretty false 2>&1 | reviewdog -f=tsc -reporter=github-pr-review
 
   format:
     name: Format Check
