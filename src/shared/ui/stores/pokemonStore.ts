@@ -1,11 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { devtools } from "zustand/middleware";
-import {
-  getPokemonList,
-  getPokemonById,
-  getPokemonDetail,
-} from "../../api";
+import { getPokemonList, getPokemonById, getPokemonDetail } from "../../api";
 import type {
   NamedAPIResource,
   Pokemon,
