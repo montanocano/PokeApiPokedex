@@ -172,6 +172,6 @@ export const usePokemonStore = create<PokemonStore>()(
         });
       },
     })),
-    { name: "pokemon-store" }
-  )
+    { name: "pokemon-store" },
+  ),
 );
