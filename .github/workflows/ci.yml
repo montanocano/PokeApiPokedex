@@ -43,7 +43,11 @@ jobs:
 
       - run: npm ci
 
-      - run: npx tsc --noEmit
+       # run tsc through reviewdog so type errors show as PR annotations
+      - uses: reviewdog/action-tsc@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
 
   format:
     name: Format Check
