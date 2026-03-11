@@ -108,7 +108,7 @@ export interface TypeDetailResponse {
   }[];
 }
 
-// type guard - derives from the same tuple so theres no duplication
+// type guard - derives from the same tuple so there's no duplication
 export function isPokemonTypeName(value: string): value is PokemonTypeName {
   return (POKEMON_TYPE_NAMES as readonly string[]).includes(value);
 }

@@ -102,19 +102,16 @@ npm install
 ## 6. Install Additional Libraries
 
 ### Tamagui (UI Framework)
-
 ```bash
 npx expo install tamagui @tamagui/config
+```
 
 ### Zustand (State Management)
-
-# Iniciar Expo
 ```bash
 npx expo install zustand
 ```
 
 ### Axios (HTTP Client)
-
 ```bash
 npx expo install axios
 ```
