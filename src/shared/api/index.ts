@@ -33,4 +33,3 @@ export {
   extractIdFromUrl,
 } from "./PokemonService";
 
-export { getPokemonDetail, parsePokemonDetail } from "./pokemonDetailService";
