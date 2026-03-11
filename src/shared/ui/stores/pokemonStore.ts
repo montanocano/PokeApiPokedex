@@ -4,7 +4,6 @@ import { devtools } from "zustand/middleware";
 import { getPokemonList, getPokemonById, getPokemonDetail } from "../../api";
 import type {
   NamedAPIResource,
-  Pokemon,
   PokemonDetail,
   PokemonTypeName,
 } from "../../api";
