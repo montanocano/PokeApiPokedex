@@ -18,7 +18,12 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run lint
+      # run eslint through reviewdog so errors show as PR annotations
+      - uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          eslint_flags: "src/ app/"
 
   typecheck:
     name: TypeCheck
