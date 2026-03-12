@@ -48,7 +48,9 @@ const PAGE_SIZE = 30;
 
 // maps a NamedAPIResource to a PokemonListItem
 // extracted to avoid duplication between fetchPokemonList and fetchNextPage
-async function mapToPokemonListItem(ref: NamedAPIResource): Promise<PokemonListItem> {
+async function mapToPokemonListItem(
+  ref: NamedAPIResource,
+): Promise<PokemonListItem> {
   const pokemon = await getPokemonById(ref.name);
   return {
     id: pokemon.id,
