@@ -115,7 +115,9 @@ export const usePokemonStore = create<PokemonStore>()(
 
         try {
           const response = await getPokemonList(offset, PAGE_SIZE);
-          const items = await Promise.all(response.results.map(mapToPokemonListItem));
+          const items = await Promise.all(
+            response.results.map(mapToPokemonListItem),
+          );
 
           set((state) => {
             state.list.push(...items);
