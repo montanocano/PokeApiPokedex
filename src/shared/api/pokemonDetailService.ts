@@ -32,9 +32,9 @@ function parseSprites(raw: Pokemon): ParsedSprites {
   };
 }
 
-// parse moves - we only keep the first 20 to not make things too heavy
+// parse moves - we only keep the first 30 to not make things too heavy
 function parseMoves(raw: Pokemon): ParsedMove[] {
-  return raw.moves.slice(0, 20).map((m) => {
+  return raw.moves.slice(0, 30).map((m) => {
     // get the most recent version group detail (last one in the array)
     const detail = m.version_group_details[m.version_group_details.length - 1];
     return {
