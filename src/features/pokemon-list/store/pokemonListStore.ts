@@ -72,7 +72,8 @@ export const usePokemonListStore = create<PokemonListStore>()(
           });
         } catch (error) {
           set((state) => {
-            state.error = error instanceof Error ? error.message : "Something went wrong";
+            state.error =
+              error instanceof Error ? error.message : "Something went wrong";
             state.isLoading = false;
           });
         }
