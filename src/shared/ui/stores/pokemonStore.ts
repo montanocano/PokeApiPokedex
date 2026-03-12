@@ -70,20 +70,27 @@ export const usePokemonStore = create<PokemonStore>()(
           const response = await getPokemonList(0, PAGE_SIZE);
 
           // fetch details for each pokemon to get sprites and types
-          const items = await Promise.all(
+          const results = await Promise.all(
             response.results.map(async (ref: NamedAPIResource) => {
               const pokemon = await getPokemonById(ref.name);
-              return {
+              const item: PokemonListItem = {
                 id: pokemon.id,
                 name: pokemon.name,
                 sprite: pokemon.sprites.front_default,
                 types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
               };
+
+              // return both the list item and the full detail so we can warm the detail cache
+              return { pokemon, item };
             }),
           );
 
           set((state) => {
-            state.list = items;
+            state.list = results.map((r) => r.item);
+            // warm the detail cache with the full pokemon details we already fetched
+            for (const { pokemon } of results) {
+              state.detailCache[pokemon.id] = pokemon;
+            }
             state.offset = PAGE_SIZE;
             state.hasMore = response.next !== null;
             state.isLoading = false;
