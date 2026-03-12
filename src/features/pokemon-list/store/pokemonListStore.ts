@@ -103,7 +103,7 @@ export const usePokemonListStore = create<PokemonListStore>()(
                 sprite: pokemon.sprites.front_default,
                 types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
               };
-            })
+            }),
           );
 
           set((state) => {
