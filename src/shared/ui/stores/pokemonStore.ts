@@ -46,6 +46,18 @@ type PokemonStore = PokemonState & PokemonActions;
 
 const PAGE_SIZE = 30;
 
+// maps a NamedAPIResource to a PokemonListItem
+// extracted to avoid duplication between fetchPokemonList and fetchNextPage
+async function mapToPokemonListItem(ref: NamedAPIResource): Promise<PokemonListItem> {
+  const pokemon = await getPokemonById(ref.name);
+  return {
+    id: pokemon.id,
+    name: pokemon.name,
+    sprite: pokemon.sprites.front_default,
+    types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
+  };
+}
+
 export const usePokemonStore = create<PokemonStore>()(
   devtools(
     immer((set, get) => ({
@@ -68,19 +80,7 @@ export const usePokemonStore = create<PokemonStore>()(
 
         try {
           const response = await getPokemonList(0, PAGE_SIZE);
-
-          // fetch details for each pokemon to get sprites and types
-          const items = await Promise.all(
-            response.results.map(async (ref: NamedAPIResource) => {
-              const pokemon = await getPokemonById(ref.name);
-              return {
-                id: pokemon.id,
-                name: pokemon.name,
-                sprite: pokemon.sprites.front_default,
-                types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
-              };
-            }),
-          );
+          const items = await Promise.all(response.results.map(mapToPokemonListItem));
 
           set((state) => {
             state.list = items;
@@ -111,18 +111,7 @@ export const usePokemonStore = create<PokemonStore>()(
 
         try {
           const response = await getPokemonList(offset, PAGE_SIZE);
-
-          const items = await Promise.all(
-            response.results.map(async (ref: NamedAPIResource) => {
-              const pokemon = await getPokemonById(ref.name);
-              return {
-                id: pokemon.id,
-                name: pokemon.name,
-                sprite: pokemon.sprites.front_default,
-                types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
-              };
-            }),
-          );
+          const items = await Promise.all(response.results.map(mapToPokemonListItem));
 
           set((state) => {
             state.list.push(...items);
