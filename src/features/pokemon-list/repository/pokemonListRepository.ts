@@ -13,15 +13,17 @@ export const pokemonListRepository = {
     const response = await getPokemonList(offset, PAGE_SIZE);
 
     const items = await Promise.all(
-      response.results.map(async (ref: NamedAPIResource): Promise<PokemonListItem> => {
-        const pokemon = await getPokemonById(ref.name);
-        return {
-          id: pokemon.id,
-          name: pokemon.name,
-          sprite: pokemon.sprites.front_default,
-          types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
-        };
-      }),
+      response.results.map(
+        async (ref: NamedAPIResource): Promise<PokemonListItem> => {
+          const pokemon = await getPokemonById(ref.name);
+          return {
+            id: pokemon.id,
+            name: pokemon.name,
+            sprite: pokemon.sprites.front_default,
+            types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
+          };
+        },
+      ),
     );
 
     return { items, hasMore: response.next !== null };
