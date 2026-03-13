@@ -35,9 +35,8 @@ export function usePokemonList() {
   }, [store]);
 
   const refreshList = useCallback(async () => {
-    store.setList([], true);
     await fetchPokemonList();
-  }, [store, fetchPokemonList]);
+  }, [fetchPokemonList]);
 
   return {
     ...store,
