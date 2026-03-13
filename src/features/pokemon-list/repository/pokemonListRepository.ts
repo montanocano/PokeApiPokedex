@@ -1,4 +1,4 @@
-import { getPokemonList, getPokemonById } from "../../../shared/api";
+import { getPokemonList, getPokemonById, isPokemonTypeName } from "../../../shared/api";
 import type { NamedAPIResource, PokemonTypeName } from "../../../shared/api";
 import type { PokemonListItem } from "../store/pokemonListStore";
 import { PAGE_SIZE } from "../store/pokemonListStore";
@@ -20,7 +20,11 @@ export const pokemonListRepository = {
             id: pokemon.id,
             name: pokemon.name,
             sprite: pokemon.sprites.front_default,
-            types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
+            types: pokemon.types
+              .map((t) => t.type.name)
+              .filter((typeName): typeName is PokemonTypeName =>
+                isPokemonTypeName(typeName),
+              ),
           };
         },
       ),
