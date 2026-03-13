@@ -8,7 +8,7 @@ import type { PokemonListResponse, Pokemon, PokemonTypeName, TypeDetailResponse 
 // offset = where to start, limit = how many to fetch
 export async function getPokemonList(
   offset: number = 0,
-  limit: number = 30
+  limit: number = 30,
 ): Promise<PokemonListResponse> {
   try {
     const data = await apiClient.get<PokemonListResponse>("/pokemon", {
