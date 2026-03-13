@@ -19,19 +19,15 @@ async function fetchPokemonListItems(
     const batch = results.slice(i, i + MAX_CONCURRENT_DETAIL_REQUESTS);
 
     const batchItems = await Promise.all(
-      batch.map(
-        async (ref: NamedAPIResource): Promise<PokemonListItem> => {
-          const pokemon = await getPokemonById(ref.name);
-          return {
-            id: pokemon.id,
-            name: pokemon.name,
-            sprite: pokemon.sprites.front_default,
-            types: pokemon.types.map(
-              (t) => t.type.name as PokemonTypeName,
-            ),
-          };
-        },
-      ),
+      batch.map(async (ref: NamedAPIResource): Promise<PokemonListItem> => {
+        const pokemon = await getPokemonById(ref.name);
+        return {
+          id: pokemon.id,
+          name: pokemon.name,
+          sprite: pokemon.sprites.front_default,
+          types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
+        };
+      }),
     );
 
     items.push(...batchItems);
