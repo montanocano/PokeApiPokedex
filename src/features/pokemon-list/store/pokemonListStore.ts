@@ -46,7 +46,7 @@ export const usePokemonListStore = create<PokemonListStore>()(
       setList: (items, hasMore) => {
         set((state) => {
           state.list = items;
-          state.offset = PAGE_SIZE;
+          state.offset = items.length;
           state.hasMore = hasMore;
         });
       },
@@ -54,7 +54,7 @@ export const usePokemonListStore = create<PokemonListStore>()(
       appendList: (items, hasMore) => {
         set((state) => {
           state.list.push(...items);
-          state.offset += PAGE_SIZE;
+          state.offset += items.length;
           state.hasMore = hasMore;
         });
       },
