@@ -23,7 +23,9 @@ export function usePokemonList() {
     store.setLoadingMore(true);
     store.setError(null);
     try {
-      const { items, hasMore } = await pokemonListRepository.getPage(store.offset);
+      const { items, hasMore } = await pokemonListRepository.getPage(
+        store.offset,
+      );
       store.appendList(items, hasMore);
     } catch (e) {
       store.setError(e instanceof Error ? e.message : "Something went wrong");
