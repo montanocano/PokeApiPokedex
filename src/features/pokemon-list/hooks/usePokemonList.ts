@@ -19,7 +19,7 @@ export function usePokemonList() {
   }, [store]);
 
   const fetchNextPage = useCallback(async () => {
-    if (store.isLoadingMore || !store.hasMore) return;
+    if (store.isLoading || store.isLoadingMore || !store.hasMore) return;
     store.setLoadingMore(true);
     store.setError(null);
     try {
