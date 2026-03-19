@@ -17,12 +17,12 @@ import { usePokemonListStore } from "../store/pokemonListStore";
 import type { PokemonListItem } from "../store/pokemonListStore";
 import type { Pokemon } from "../../../shared/api";
 
+import { getPokemonList, getPokemonById } from "../../../shared/api";
+
 jest.mock("../../../shared/api", () => ({
   getPokemonList: jest.fn(),
   getPokemonById: jest.fn(),
 }));
-
-import { getPokemonList, getPokemonById } from "../../../shared/api";
 
 const mockGetPokemonList = getPokemonList as jest.MockedFunction<typeof getPokemonList>;
 const mockGetPokemonById = getPokemonById as jest.MockedFunction<typeof getPokemonById>;
