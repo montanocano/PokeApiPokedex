@@ -115,7 +115,9 @@ describe("parsePokemonDetail", () => {
 
   it("includes speciesUrl from species.url", () => {
     const detail = parsePokemonDetail(makePokemon());
-    expect(detail.speciesUrl).toBe("https://pokeapi.co/api/v2/pokemon-species/25/");
+    expect(detail.speciesUrl).toBe(
+      "https://pokeapi.co/api/v2/pokemon-species/25/",
+    );
   });
 });
 
