@@ -99,7 +99,7 @@ function applyFilters(
     (pokemon) =>
       matchesSearch(pokemon, normalizedQuery) &&
       matchesTypes(pokemon, criteria.types) &&
-      matchesGenerations(pokemon, criteria.generations)
+      matchesGenerations(pokemon, criteria.generations),
   );
 }
 
