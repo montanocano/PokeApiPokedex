@@ -2,7 +2,6 @@ import { useEffect, useCallback } from "react";
 import {
   usePokemonListStore,
   selectList,
-  selectOffset,
   selectHasMore,
   selectIsLoading,
   selectIsLoadingMore,
@@ -15,7 +14,6 @@ import {
 
 export function usePokemonList() {
   const list = usePokemonListStore(selectList);
-  const offset = usePokemonListStore(selectOffset);
   const hasMore = usePokemonListStore(selectHasMore);
   const isLoading = usePokemonListStore(selectIsLoading);
   const isLoadingMore = usePokemonListStore(selectIsLoadingMore);
@@ -47,16 +45,12 @@ export function usePokemonList() {
 
   return {
     list,
-    offset,
-    hasMore,
     isLoading,
     isLoadingMore,
     error,
-    fetchPokemonList,
-    fetchNextPage,
-    refreshList,
     handleEndReached,
     handleRetry,
     handleRetryMore,
+    refreshList,
   };
 }
