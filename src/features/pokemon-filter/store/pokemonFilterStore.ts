@@ -64,7 +64,10 @@ function getGeneration(id: number): number {
   return generation;
 }
 
-function matchesSearch(pokemon: PokemonListItem, normalizedQuery: string): boolean {
+function matchesSearch(
+  pokemon: PokemonListItem,
+  normalizedQuery: string,
+): boolean {
   const matchesName = pokemon.name.toLowerCase().includes(normalizedQuery);
   const matchesNumber = pokemon.id.toString().startsWith(normalizedQuery);
   return normalizedQuery.length === 0 || matchesName || matchesNumber;
