@@ -128,7 +128,7 @@ describe("combined filters", () => {
     const { result } = renderHook(() => usePokemonFilter(mockPokemon));
 
     act(() =>
-      result.current.handleApplyFilter({ types: ["fire"], generations: [2] })
+      result.current.handleApplyFilter({ types: ["fire"], generations: [2] }),
     );
 
     expect(result.current.filteredList).toHaveLength(0);
