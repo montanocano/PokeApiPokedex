@@ -30,7 +30,7 @@ export function usePokemonFilter(allPokemon: PokemonListItem[]) {
     (criteria: { types?: PokemonTypeName[]; generations?: number[] }) => {
       applyFilter(criteria, allPokemon);
     },
-    [applyFilter, allPokemon]
+    [applyFilter, allPokemon],
   );
 
   const handleClearFilters = useCallback(() => {
