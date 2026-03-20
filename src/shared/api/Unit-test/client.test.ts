@@ -124,7 +124,7 @@ describe("apiClient interceptor", () => {
   it("step 5 – throws ApiHttpError on HTTP 500", async () => {
     mockAxios.onGet("/pokemon").reply(500, {});
     await expect(testClient.get("/pokemon")).rejects.toBeInstanceOf(
-      ApiHttpError
+      ApiHttpError,
     );
   });
 });
