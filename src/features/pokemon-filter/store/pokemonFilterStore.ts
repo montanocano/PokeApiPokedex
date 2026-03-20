@@ -31,7 +31,7 @@ interface PokemonFilterActions {
   /** Sets active types and/or generations then refilters */
   applyFilter: (
     criteria: Partial<Pick<FilterCriteria, "types" | "generations">>,
-    allPokemon: PokemonListItem[]
+    allPokemon: PokemonListItem[],
   ) => void;
   /** Resets all filter criteria and restores the full list */
   clearFilters: (allPokemon: PokemonListItem[]) => void;
