@@ -44,8 +44,14 @@ function makePokemon(overrides: Partial<Pokemon> = {}): Pokemon {
       front_default: "https://example.com/front.png",
       front_shiny: "https://example.com/shiny.png",
       other: {
-        "official-artwork": { front_default: "https://example.com/artwork.png", front_shiny: null },
-        home: { front_default: "https://example.com/home.png", front_shiny: null },
+        "official-artwork": {
+          front_default: "https://example.com/artwork.png",
+          front_shiny: null,
+        },
+        home: {
+          front_default: "https://example.com/home.png",
+          front_shiny: null,
+        },
       },
     },
     moves: Array.from({ length: 35 }, (_, i) => ({
