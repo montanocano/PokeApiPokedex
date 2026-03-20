@@ -37,9 +37,7 @@ const fakePokemonListResponse = {
   count: 1302,
   next: "https://pokeapi.co/api/v2/pokemon?offset=30&limit=30",
   previous: null,
-  results: [
-    { name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" },
-  ],
+  results: [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }],
 };
 
 const fakePokemon = {
