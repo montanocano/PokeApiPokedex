@@ -13,11 +13,7 @@
 
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import {
-  ApiTimeoutError,
-  ApiNetworkError,
-  ApiHttpError,
-} from "../client";
+import { ApiTimeoutError, ApiNetworkError, ApiHttpError } from "../client";
 import { ApiString } from "../apiString";
 
 // ─── Step 1: ApiString ────────────────────────────────────────────────────────
