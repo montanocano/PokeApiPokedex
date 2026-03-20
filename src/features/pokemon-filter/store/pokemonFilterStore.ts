@@ -80,8 +80,13 @@ function matchesTypes(
   return types.length === 0 || types.every((t) => pokemon.types.includes(t));
 }
 
-function matchesGenerations(pokemon: PokemonListItem, generations: number[]): boolean {
-  return generations.length === 0 || generations.includes(getGeneration(pokemon.id));
+function matchesGenerations(
+  pokemon: PokemonListItem,
+  generations: number[],
+): boolean {
+  return (
+    generations.length === 0 || generations.includes(getGeneration(pokemon.id))
+  );
 }
 
 function applyFilters(
