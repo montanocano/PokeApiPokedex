@@ -86,8 +86,16 @@ describe("parsePokemonDetail", () => {
   it("step 2 – converts stats to camelCase ParsedStat[]", () => {
     const detail = parsePokemonDetail(makePokemon());
     expect(detail.stats).toHaveLength(2);
-    expect(detail.stats[0]).toEqual({ baseStat: 35, effort: 0, statName: "hp" });
-    expect(detail.stats[1]).toEqual({ baseStat: 55, effort: 0, statName: "attack" });
+    expect(detail.stats[0]).toEqual({
+      baseStat: 35,
+      effort: 0,
+      statName: "hp",
+    });
+    expect(detail.stats[1]).toEqual({
+      baseStat: 55,
+      effort: 0,
+      statName: "attack",
+    });
   });
 
   it("step 3 – converts abilities to ParsedAbility[]", () => {
