@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { devtools } from "zustand/middleware";
-import { getPokemonList, getPokemonById } from "../../../shared/api";
-import type { NamedAPIResource, PokemonTypeName } from "../../../shared/api";
+import { getPokemonList, getPokemonListItems, PAGE_SIZE } from "../../../shared/api";
+import type { PokemonTypeName } from "../../../shared/api";
 
 export interface PokemonListItem {
   id: number;
@@ -29,37 +29,6 @@ interface PokemonListActions {
 
 export type PokemonListStore = PokemonListState & PokemonListActions;
 
-export const PAGE_SIZE = 30;
-const MAX_CONCURRENT = 5;
-
-async function fetchInBatches(
-  results: NamedAPIResource[],
-): Promise<PokemonListItem[]> {
-  const items: PokemonListItem[] = [];
-
-  for (let i = 0; i < results.length; i += MAX_CONCURRENT) {
-    const batch = results.slice(i, i + MAX_CONCURRENT);
-
-    const batchItems = await Promise.all(
-      batch.map(
-        async (ref: NamedAPIResource): Promise<PokemonListItem> => {
-          const pokemon = await getPokemonById(ref.name);
-          return {
-            id: pokemon.id,
-            name: pokemon.name,
-            sprite: pokemon.sprites.front_default,
-            types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
-          };
-        },
-      ),
-    );
-
-    items.push(...batchItems);
-  }
-
-  return items;
-}
-
 export const usePokemonListStore = create<PokemonListStore>()(
   devtools(
     immer((set, get) => ({
@@ -77,7 +46,7 @@ export const usePokemonListStore = create<PokemonListStore>()(
         });
         try {
           const response = await getPokemonList(0, PAGE_SIZE);
-          const items = await fetchInBatches(response.results);
+          const items = await getPokemonListItems(response.results);
           set((state) => {
             state.list = items;
             state.offset = PAGE_SIZE;
@@ -102,7 +71,7 @@ export const usePokemonListStore = create<PokemonListStore>()(
         });
         try {
           const response = await getPokemonList(offset, PAGE_SIZE);
-          const items = await fetchInBatches(response.results);
+          const items = await getPokemonListItems(response.results);
           set((state) => {
             state.list.push(...items);
             state.offset += PAGE_SIZE;

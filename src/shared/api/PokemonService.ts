@@ -1,14 +1,17 @@
 import { apiClient } from "./client";
-import type { PokemonListResponse, Pokemon, PokemonTypeName, TypeDetailResponse } from "./Types";
+import type { NamedAPIResource, PokemonListResponse, Pokemon, PokemonTypeName, TypeDetailResponse } from "./Types";
+import type { PokemonListItem } from "../../features/pokemon-list/store/pokemonListStore";
 
 // service for pokemon list related api calls
-// for now just list and types, we'll add more stuff later
+
+const MAX_CONCURRENT = 5;
+export const PAGE_SIZE = 30;
 
 // get paginated list of pokemon
 // offset = where to start, limit = how many to fetch
 export async function getPokemonList(
   offset: number = 0,
-  limit: number = 30,
+  limit: number = PAGE_SIZE,
 ): Promise<PokemonListResponse> {
   try {
     const data = await apiClient.get<PokemonListResponse>("/pokemon", {
@@ -16,13 +19,12 @@ export async function getPokemonList(
     });
     return data;
   } catch (error) {
-    // let the error bubble up, the client interceptor already handles it
     console.error("Error getting pokemon list:", error);
     throw error;
   }
 }
 
-// get a single pokemon by id (we need this to get sprites and types for each one)
+// get a single pokemon by id
 export async function getPokemonById(id: number | string): Promise<Pokemon> {
   try {
     const data = await apiClient.get<Pokemon>(`/pokemon/${id}`);
@@ -33,15 +35,43 @@ export async function getPokemonById(id: number | string): Promise<Pokemon> {
   }
 }
 
+// transforms a raw Pokemon api response into a PokemonListItem
+function toPokemonListItem(pokemon: Pokemon): PokemonListItem {
+  return {
+    id: pokemon.id,
+    name: pokemon.name,
+    sprite: pokemon.sprites.front_default,
+    types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
+  };
+}
+
+// fetches a batch of pokemon by their name references and transforms them
+// batches requests in groups of MAX_CONCURRENT to avoid hitting rate limits
+export async function getPokemonListItems(
+  results: NamedAPIResource[],
+): Promise<PokemonListItem[]> {
+  const items: PokemonListItem[] = [];
+
+  for (let i = 0; i < results.length; i += MAX_CONCURRENT) {
+    const batch = results.slice(i, i + MAX_CONCURRENT);
+    const batchItems = await Promise.all(
+      batch.map(async (ref: NamedAPIResource) => {
+        const pokemon = await getPokemonById(ref.name);
+        return toPokemonListItem(pokemon);
+      }),
+    );
+    items.push(...batchItems);
+  }
+
+  return items;
+}
+
 // get all pokemon of a specific type
-// eg: getPokemonByType("fire") -> all fire pokemon
 export async function getPokemonByType(
-  typeName: PokemonTypeName
+  typeName: PokemonTypeName,
 ): Promise<TypeDetailResponse> {
   try {
-    const data = await apiClient.get<TypeDetailResponse>(
-      `/type/${typeName}`
-    );
+    const data = await apiClient.get<TypeDetailResponse>(`/type/${typeName}`);
     return data;
   } catch (error) {
     console.error(`Error getting pokemon of type ${typeName}:`, error);
