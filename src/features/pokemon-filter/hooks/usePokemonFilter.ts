@@ -23,7 +23,7 @@ export function usePokemonFilter(allPokemon: PokemonListItem[]) {
     (query: string) => {
       setSearchQuery(query, allPokemon);
     },
-    [setSearchQuery, allPokemon]
+    [setSearchQuery, allPokemon],
   );
 
   const handleApplyFilter = useCallback(
