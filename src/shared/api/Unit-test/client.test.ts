@@ -106,7 +106,7 @@ describe("apiClient interceptor", () => {
   it("step 4 – throws ApiNetworkError on network failure (no response)", async () => {
     mockAxios.onGet("/pokemon/1").networkError();
     await expect(testClient.get("/pokemon/1")).rejects.toBeInstanceOf(
-      ApiNetworkError
+      ApiNetworkError,
     );
   });
 
