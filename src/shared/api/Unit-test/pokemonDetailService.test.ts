@@ -101,7 +101,9 @@ describe("parsePokemonDetail", () => {
     const detail = parsePokemonDetail(makePokemon());
     expect(detail.sprites.frontDefault).toBe("https://example.com/front.png");
     expect(detail.sprites.frontShiny).toBe("https://example.com/shiny.png");
-    expect(detail.sprites.officialArtwork).toBe("https://example.com/artwork.png");
+    expect(detail.sprites.officialArtwork).toBe(
+      "https://example.com/artwork.png",
+    );
     expect(detail.sprites.home).toBe("https://example.com/home.png");
   });
 
