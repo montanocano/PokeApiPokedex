@@ -6,12 +6,12 @@ import type { PokemonListItem } from "../../pokemon-list/store/pokemonListStore"
 // Fixtures
 
 const mockPokemon: PokemonListItem[] = [
-  { id: 1,   name: "bulbasaur",  sprite: null, types: ["grass", "poison"] },
-  { id: 4,   name: "charmander", sprite: null, types: ["fire"] },
-  { id: 7,   name: "squirtle",   sprite: null, types: ["water"] },
-  { id: 25,  name: "pikachu",    sprite: null, types: ["electric"] },
-  { id: 6,   name: "charizard",  sprite: null, types: ["fire", "flying"] },
-  { id: 249, name: "lugia",      sprite: null, types: ["psychic", "flying"] },
+  { id: 1, name: "bulbasaur", sprite: null, types: ["grass", "poison"] },
+  { id: 4, name: "charmander", sprite: null, types: ["fire"] },
+  { id: 7, name: "squirtle", sprite: null, types: ["water"] },
+  { id: 25, name: "pikachu", sprite: null, types: ["electric"] },
+  { id: 6, name: "charizard", sprite: null, types: ["fire", "flying"] },
+  { id: 249, name: "lugia", sprite: null, types: ["psychic", "flying"] },
 ];
 
 // Reset store state before each test
