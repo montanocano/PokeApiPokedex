@@ -1,12 +1,12 @@
 /**
  * @file client.test.ts
- * @description Unit tests for the API client: custom errors and ApiString helper.
+ * @description Unit tests for the API client: custom errors, ApiString helper, and interceptor behaviour.
  *
  * Steps:
  *  1. Verify ApiString.getAPIBase() returns the expected PokeAPI base URL.
  *  2. Verify each custom error class (ApiTimeoutError, ApiNetworkError, ApiHttpError)
  *     sets the correct name, message and extra properties.
- *  3. Verify the axios interceptor maps ECONNABORTED -> ApiTimeoutError.
+ *  3. Verify the axios interceptor unwraps response.data to return the payload directly.
  *  4. Verify the interceptor maps no-response errors -> ApiNetworkError.
  *  5. Verify the interceptor maps HTTP status responses -> ApiHttpError with statusCode.
  */
