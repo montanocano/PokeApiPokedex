@@ -64,7 +64,13 @@ const fakeTypeResponse = {
   id: 10,
   name: "fire",
   pokemon: [
-    { pokemon: { name: "charmander", url: "https://pokeapi.co/api/v2/pokemon/4/" }, slot: 1 },
+    {
+      pokemon: {
+        name: "charmander",
+        url: "https://pokeapi.co/api/v2/pokemon/4/",
+      },
+      slot: 1,
+    },
   ],
 };
 
