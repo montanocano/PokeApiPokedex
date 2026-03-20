@@ -155,6 +155,8 @@ describe("extractIdFromUrl", () => {
   });
 
   it("works for three-digit ids", () => {
-    expect(extractIdFromUrl("https://pokeapi.co/api/v2/pokemon/150/")).toBe(150);
+    expect(extractIdFromUrl("https://pokeapi.co/api/v2/pokemon/150/")).toBe(
+      150,
+    );
   });
 });
