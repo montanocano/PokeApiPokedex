@@ -93,8 +93,16 @@ describe("parsePokemonDetail", () => {
   it("step 3 – converts abilities to ParsedAbility[]", () => {
     const detail = parsePokemonDetail(makePokemon());
     expect(detail.abilities).toHaveLength(2);
-    expect(detail.abilities[0]).toEqual({ abilityName: "static", isHidden: false, slot: 1 });
-    expect(detail.abilities[1]).toEqual({ abilityName: "lightning-rod", isHidden: true, slot: 3 });
+    expect(detail.abilities[0]).toEqual({
+      abilityName: "static",
+      isHidden: false,
+      slot: 1,
+    });
+    expect(detail.abilities[1]).toEqual({
+      abilityName: "lightning-rod",
+      isHidden: true,
+      slot: 3,
+    });
   });
 
   it("step 4 – extracts sprite urls into ParsedSprites", () => {
