@@ -87,7 +87,7 @@ describe("apiClient interceptor", () => {
             error.response.statusText || "Unknown error"
           )
         );
-      }
+      },
     );
 
     mockAxios = new MockAdapter(testClient);
