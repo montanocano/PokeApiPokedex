@@ -91,7 +91,7 @@ function matchesGenerations(
 
 function applyFilters(
   allPokemon: PokemonListItem[],
-  criteria: FilterCriteria
+  criteria: FilterCriteria,
 ): PokemonListItem[] {
   const normalizedQuery = criteria.searchQuery.trim().toLowerCase();
 
