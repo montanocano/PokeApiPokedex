@@ -54,7 +54,10 @@ const fakePokemon = {
   sprites: {
     front_default: "https://example.com/bulbasaur.png",
     front_shiny: null,
-    other: { "official-artwork": { front_default: null, front_shiny: null }, home: { front_default: null, front_shiny: null } },
+    other: {
+      "official-artwork": { front_default: null, front_shiny: null },
+      home: { front_default: null, front_shiny: null },
+    },
   },
   moves: [],
   species: { name: "bulbasaur", url: "" },
