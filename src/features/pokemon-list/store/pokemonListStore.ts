@@ -86,11 +86,16 @@ export const usePokemonListStore = create<PokemonListStore>()(
         }
       },
 
+      // Reset all state flags before re-fetching so the UI is never stuck
+      // in a loading/error state from a previous session or in-flight request
       refreshList: async () => {
         set((state) => {
           state.list = [];
           state.offset = 0;
           state.hasMore = true;
+          state.isLoading = false;
+          state.isLoadingMore = false;
+          state.error = null;
         });
         await get().fetchPokemonList();
       },
@@ -104,3 +109,15 @@ export const usePokemonListStore = create<PokemonListStore>()(
     { name: "pokemon-list-store" },
   ),
 );
+
+// Selectors
+export const selectList = (state: PokemonListStore) => state.list;
+export const selectOffset = (state: PokemonListStore) => state.offset;
+export const selectHasMore = (state: PokemonListStore) => state.hasMore;
+export const selectIsLoading = (state: PokemonListStore) => state.isLoading;
+export const selectIsLoadingMore = (state: PokemonListStore) => state.isLoadingMore;
+export const selectError = (state: PokemonListStore) => state.error;
+export const selectFetchPokemonList = (state: PokemonListStore) => state.fetchPokemonList;
+export const selectFetchNextPage = (state: PokemonListStore) => state.fetchNextPage;
+export const selectRefreshList = (state: PokemonListStore) => state.refreshList;
+export const selectClearError = (state: PokemonListStore) => state.clearError;

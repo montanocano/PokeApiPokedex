@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import { isPokemonTypeName } from "./Types";
 import type { NamedAPIResource, PokemonListResponse, Pokemon, PokemonTypeName, TypeDetailResponse } from "./Types";
 import type { PokemonListItem } from "../../features/pokemon-list/store/pokemonListStore";
 
@@ -37,11 +38,15 @@ export async function getPokemonById(id: number | string): Promise<Pokemon> {
 
 // transforms a raw Pokemon api response into a PokemonListItem
 function toPokemonListItem(pokemon: Pokemon): PokemonListItem {
+  const types = pokemon.types
+    .map((t) => t.type.name)
+    .filter(isPokemonTypeName);
+
   return {
     id: pokemon.id,
     name: pokemon.name,
     sprite: pokemon.sprites.front_default,
-    types: pokemon.types.map((t) => t.type.name as PokemonTypeName),
+    types,
   };
 }
 

@@ -1,19 +1,29 @@
 import { useEffect, useCallback } from "react";
-import { usePokemonListStore } from "../store/pokemonListStore";
+import {
+  usePokemonListStore,
+  selectList,
+  selectOffset,
+  selectHasMore,
+  selectIsLoading,
+  selectIsLoadingMore,
+  selectError,
+  selectFetchPokemonList,
+  selectFetchNextPage,
+  selectRefreshList,
+  selectClearError,
+} from "../store/pokemonListStore";
 
 export function usePokemonList() {
-  const {
-    list,
-    offset,
-    hasMore,
-    isLoading,
-    isLoadingMore,
-    error,
-    fetchPokemonList,
-    fetchNextPage,
-    refreshList,
-    clearError,
-  } = usePokemonListStore();
+  const list = usePokemonListStore(selectList);
+  const offset = usePokemonListStore(selectOffset);
+  const hasMore = usePokemonListStore(selectHasMore);
+  const isLoading = usePokemonListStore(selectIsLoading);
+  const isLoadingMore = usePokemonListStore(selectIsLoadingMore);
+  const error = usePokemonListStore(selectError);
+  const fetchPokemonList = usePokemonListStore(selectFetchPokemonList);
+  const fetchNextPage = usePokemonListStore(selectFetchNextPage);
+  const refreshList = usePokemonListStore(selectRefreshList);
+  const clearError = usePokemonListStore(selectClearError);
 
   useEffect(() => {
     fetchPokemonList();
