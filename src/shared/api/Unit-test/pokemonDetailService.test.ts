@@ -64,7 +64,10 @@ function makePokemon(overrides: Partial<Pokemon> = {}): Pokemon {
         },
       ],
     })),
-    species: { name: "pikachu", url: "https://pokeapi.co/api/v2/pokemon-species/25/" },
+    species: {
+      name: "pikachu",
+      url: "https://pokeapi.co/api/v2/pokemon-species/25/",
+    },
     ...overrides,
   };
 }
