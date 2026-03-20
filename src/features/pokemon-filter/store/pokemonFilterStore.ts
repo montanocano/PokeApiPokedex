@@ -52,7 +52,7 @@ export type PokemonFilterStore = PokemonFilterState & PokemonFilterActions;
 function getGeneration(id: number): number {
   let generation = 9;
 
-  if (id <= 151)      generation = 1;
+  if (id <= 151) generation = 1;
   else if (id <= 251) generation = 2;
   else if (id <= 386) generation = 3;
   else if (id <= 493) generation = 4;
