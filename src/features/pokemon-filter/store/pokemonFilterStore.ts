@@ -73,7 +73,10 @@ function matchesSearch(
   return normalizedQuery.length === 0 || matchesName || matchesNumber;
 }
 
-function matchesTypes(pokemon: PokemonListItem, types: PokemonTypeName[]): boolean {
+function matchesTypes(
+  pokemon: PokemonListItem,
+  types: PokemonTypeName[],
+): boolean {
   return types.length === 0 || types.every((t) => pokemon.types.includes(t));
 }
 
