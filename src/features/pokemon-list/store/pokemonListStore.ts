@@ -1,7 +1,6 @@
 import type { PokemonListRepository, PokemonListItem } from "../repositories/pokemonListRepository";
-import { PAGE_SIZE } from "../../shared/api/PokemonService";
 
-export { PAGE_SIZE };
+export const PAGE_SIZE = 30;
 
 interface PokemonListState {
   list: PokemonListItem[];
@@ -43,7 +42,7 @@ export function createPokemonListStore(repository: PokemonListRepository) {
         // when it finishes we save the data in the state
         set((state) => {
           state.list = items;
-          state.offset = PAGE_SIZE;
+          state.offset = items.length;
           state.hasMore = hasMore;
           state.isLoading = false;
         });
@@ -67,7 +66,7 @@ export function createPokemonListStore(repository: PokemonListRepository) {
         set((state) => {
           // add the new ones at the end of the current list
           state.list.push(...items);
-          state.offset += PAGE_SIZE;
+          state.offset += items.length;
           state.hasMore = more;
           state.isLoadingMore = false;
         });

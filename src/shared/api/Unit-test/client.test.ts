@@ -6,24 +6,29 @@
  *  1. Verify ApiString.getAPIBase() returns the expected PokeAPI base URL.
  *  2. Verify each custom error class (ApiTimeoutError, ApiNetworkError, ApiHttpError)
  *     sets the correct name, message and extra properties.
- *  3. Verify the axios interceptor unwraps response.data to return the payload directly.
+ *  3. Verify the real apiClient interceptor unwraps response.data to return the payload directly.
  *  4. Verify the interceptor maps no-response errors -> ApiNetworkError.
  *  5. Verify the interceptor maps HTTP status responses -> ApiHttpError with statusCode.
  */
 
-import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { ApiTimeoutError, ApiNetworkError, ApiHttpError } from "../client";
+import {
+  apiClient,
+  _axiosInstance,
+  ApiTimeoutError,
+  ApiNetworkError,
+  ApiHttpError,
+} from "../client";
 import { ApiString } from "../apiString";
 
-// ─── Step 1: ApiString ────────────────────────────────────────────────────────
+// Step 1: ApiString
 describe("ApiString", () => {
   it("returns the correct PokeAPI base URL", () => {
     expect(ApiString.getAPIBase()).toBe("https://pokeapi.co/api/v2");
   });
 });
 
-// ─── Step 2: Custom error classes ─────────────────────────────────────────────
+// Step 2: Custom error classes
 describe("ApiTimeoutError", () => {
   it("has the correct name and message", () => {
     const err = new ApiTimeoutError();
@@ -57,59 +62,36 @@ describe("ApiHttpError", () => {
   });
 });
 
-// ─── Steps 3–5: Interceptor behaviour via axios-mock-adapter ─────────────────
+// Steps 3–5: Interceptor behaviour testing the REAL apiClient
 describe("apiClient interceptor", () => {
-  // We test interceptor logic by creating a fresh axios instance mirroring
-  // the production setup so we don't couple to the singleton.
-  let mockAxios: MockAdapter;
-  let testClient: ReturnType<typeof axios.create>;
+  let mock: MockAdapter;
 
   beforeEach(() => {
-    testClient = axios.create({ baseURL: "https://pokeapi.co/api/v2" });
-
-    // mirror the same interceptor logic from client.ts
-    testClient.interceptors.response.use(
-      (response) => response.data,
-      (error) => {
-        if (error.code === "ECONNABORTED") {
-          return Promise.reject(new ApiTimeoutError());
-        }
-        if (!error.response) {
-          return Promise.reject(new ApiNetworkError());
-        }
-        return Promise.reject(
-          new ApiHttpError(
-            error.response.status,
-            error.response.statusText || "Unknown error",
-          ),
-        );
-      }
-    );
-
-    mockAxios = new MockAdapter(testClient);
+    // Attach mock-adapter to the actual axios instance used by apiClient
+    mock = new MockAdapter(_axiosInstance);
   });
 
   afterEach(() => {
-    mockAxios.restore();
+    mock.restore();
   });
 
   it("step 3 – unwraps response.data on success", async () => {
-    mockAxios.onGet("/pokemon/1").reply(200, { id: 1, name: "bulbasaur" });
-    const result = await testClient.get("/pokemon/1");
+    mock.onGet("/pokemon/1").reply(200, { id: 1, name: "bulbasaur" });
+    const result = await apiClient.get("/pokemon/1");
     expect(result).toEqual({ id: 1, name: "bulbasaur" });
   });
 
   it("step 4 – throws ApiNetworkError on network failure (no response)", async () => {
-    mockAxios.onGet("/pokemon/1").networkError();
-    await expect(testClient.get("/pokemon/1")).rejects.toBeInstanceOf(
+    mock.onGet("/pokemon/1").networkError();
+    await expect(apiClient.get("/pokemon/1")).rejects.toBeInstanceOf(
       ApiNetworkError
     );
   });
 
   it("step 5 – throws ApiHttpError with statusCode on HTTP 404", async () => {
-    mockAxios.onGet("/pokemon/999").reply(404, {}, { statusText: "Not Found" });
+    mock.onGet("/pokemon/999").reply(404, {});
     try {
-      await testClient.get("/pokemon/999");
+      await apiClient.get("/pokemon/999");
       fail("should have thrown");
     } catch (e) {
       expect(e).toBeInstanceOf(ApiHttpError);
@@ -118,8 +100,8 @@ describe("apiClient interceptor", () => {
   });
 
   it("step 5 – throws ApiHttpError on HTTP 500", async () => {
-    mockAxios.onGet("/pokemon").reply(500, {});
-    await expect(testClient.get("/pokemon")).rejects.toBeInstanceOf(
+    mock.onGet("/pokemon").reply(500, {});
+    await expect(apiClient.get("/pokemon")).rejects.toBeInstanceOf(
       ApiHttpError
     );
   });
