@@ -1,6 +1,7 @@
 import type { PokemonListRepository, PokemonListItem } from "../repositories/pokemonListRepository";
+import { PAGE_SIZE } from "../../shared/api/PokemonService";
 
-export const PAGE_SIZE = 30;
+export { PAGE_SIZE };
 
 interface PokemonListState {
   list: PokemonListItem[];
