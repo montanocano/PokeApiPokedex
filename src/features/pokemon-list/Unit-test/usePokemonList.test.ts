@@ -1,67 +1,51 @@
-/**
- * @file usePokemonList.test.ts
- * @description Unit tests for src/features/pokemon-list/hooks/usePokemonList.ts
- *
- * Steps:
- *  1. fetchPokemonList – sets loading states and populates list on success.
- *  2. fetchPokemonList – stores error message on failure, loading ends.
- *  3. fetchNextPage   – skips when isLoadingMore is true.
- *  4. fetchNextPage   – skips when hasMore is false.
- *  5. fetchNextPage   – appends next page at correct offset.
- *  6. refreshList     – resets and re-fetches from page 0.
- */
+// tests for the usePokemonList hook
+// we use a mock repository so we dont depend on the real api
 
 import { renderHook, act } from "@testing-library/react-native";
+import { createStore, type StoreApi } from "zustand/vanilla";
+import { useStore } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import { usePokemonList } from "../hooks/usePokemonList";
-import { usePokemonListStore } from "../store/pokemonListStore";
-import type { PokemonListItem } from "../store/pokemonListStore";
-import type { Pokemon } from "../../../shared/api";
+import { createPokemonListStore } from "../store/pokemonListStore";
+import type { PokemonListStore } from "../store/pokemonListStore";
+import type { PokemonListRepository, PokemonListItem, PokemonPage } from "../repositories/pokemonListRepository";
 
-import { getPokemonList, getPokemonById } from "../../../shared/api";
+// mock of fetchPage to control what it returns in each test
+const mockFetchPage = jest.fn<Promise<PokemonPage>, [number, number]>();
 
-jest.mock("../../../shared/api", () => ({
-  getPokemonList: jest.fn(),
-  getPokemonById: jest.fn(),
+const mockRepository: PokemonListRepository = {
+  fetchPage: mockFetchPage,
+};
+
+// test store, we reset it before each test
+let testStore: StoreApi<PokemonListStore>;
+
+// we replace store.ts so the hook uses our test store
+// useStore (not getState) keeps the hook subscribed to changes
+jest.mock("../store/store", () => ({
+  get usePokemonListStore() {
+    return (selector: (state: PokemonListStore) => unknown) =>
+      useStore(testStore, selector);
+  },
 }));
 
-const mockGetPokemonList = getPokemonList as jest.MockedFunction<typeof getPokemonList>;
-const mockGetPokemonById = getPokemonById as jest.MockedFunction<typeof getPokemonById>;
-
-// helpers
+// creates a fake pokemon with the given id
 function makePokemonListItem(id: number): PokemonListItem {
   return { id, name: `pokemon-${id}`, sprite: null, types: ["water"] };
 }
 
-function makePokemonResponse(id: number): Pokemon {
+// creates a fake page with N items
+function makePage(count: number, hasMore: boolean): PokemonPage {
   return {
-    id,
-    name: `pokemon-${id}`,
-    sprites: { front_default: null },
-    types: [{ type: { name: "water" } }],
-  } as unknown as Pokemon;
-}
-
-function makePokemonListResponse(count: number, hasMore: boolean) {
-  return {
-    results: Array.from({ length: count }, (_, i) => ({
-      name: `pokemon-${i + 1}`,
-      url: `https://pokeapi.co/api/v2/pokemon/${i + 1}/`,
-    })),
-    next: hasMore ? "https://pokeapi.co/api/v2/pokemon?offset=30" : null,
-    previous: null,
-    count: 1000,
+    items: Array.from({ length: count }, (_, i) => makePokemonListItem(i + 1)),
+    hasMore,
   };
 }
 
 function resetStore() {
-  usePokemonListStore.setState({
-    list: [],
-    offset: 0,
-    hasMore: true,
-    isLoading: false,
-    isLoadingMore: false,
-    error: null,
-  });
+  testStore = createStore(
+    immer(createPokemonListStore(mockRepository)),
+  );
 }
 
 beforeEach(() => {
@@ -70,11 +54,8 @@ beforeEach(() => {
 });
 
 describe("usePokemonList", () => {
-  it("step 1 – sets isLoading=true before fetch, populates list on success", async () => {
-    mockGetPokemonList.mockResolvedValueOnce(makePokemonListResponse(2, false));
-    mockGetPokemonById
-      .mockResolvedValueOnce(makePokemonResponse(1))
-      .mockResolvedValueOnce(makePokemonResponse(2));
+  it("step 1 - loads the list correctly and disables loading when done", async () => {
+    mockFetchPage.mockResolvedValueOnce(makePage(2, false));
 
     const { result } = renderHook(() => usePokemonList());
 
@@ -82,14 +63,15 @@ describe("usePokemonList", () => {
       await result.current.fetchPokemonList();
     });
 
-    expect(mockGetPokemonList).toHaveBeenCalledWith(0, 30);
+    // it should have fetched from offset 0
+    expect(mockFetchPage).toHaveBeenCalledWith(0, 30);
     expect(result.current.list).toHaveLength(2);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
   });
 
-  it("step 2 – stores error message on failure, isLoading ends as false", async () => {
-    mockGetPokemonList.mockRejectedValueOnce(new Error("network error"));
+  it("step 2 - saves the error if the call fails", async () => {
+    mockFetchPage.mockRejectedValueOnce(new Error("network error"));
 
     const { result } = renderHook(() => usePokemonList());
 
@@ -102,8 +84,8 @@ describe("usePokemonList", () => {
     expect(result.current.list).toEqual([]);
   });
 
-  it("step 2 – stores generic message for non-Error rejections", async () => {
-    mockGetPokemonList.mockRejectedValueOnce("string error");
+  it("step 2 - if the error is not an Error instance it saves a generic message", async () => {
+    mockFetchPage.mockRejectedValueOnce("string error");
 
     const { result } = renderHook(() => usePokemonList());
 
@@ -114,8 +96,8 @@ describe("usePokemonList", () => {
     expect(result.current.error).toBe("Something went wrong");
   });
 
-  it("step 3 – skips fetchNextPage when isLoadingMore=true", async () => {
-    usePokemonListStore.setState({ isLoadingMore: true });
+  it("step 3 - does not call the api if already loading more", async () => {
+    testStore.setState({ isLoadingMore: true });
 
     const { result } = renderHook(() => usePokemonList());
 
@@ -123,11 +105,11 @@ describe("usePokemonList", () => {
       await result.current.fetchNextPage();
     });
 
-    expect(mockGetPokemonList).not.toHaveBeenCalled();
+    expect(mockFetchPage).not.toHaveBeenCalled();
   });
 
-  it("step 4 – skips fetchNextPage when hasMore=false", async () => {
-    usePokemonListStore.setState({ hasMore: false });
+  it("step 4 - does not call the api if there are no more pages", async () => {
+    testStore.setState({ hasMore: false });
 
     const { result } = renderHook(() => usePokemonList());
 
@@ -135,23 +117,15 @@ describe("usePokemonList", () => {
       await result.current.fetchNextPage();
     });
 
-    expect(mockGetPokemonList).not.toHaveBeenCalled();
+    expect(mockFetchPage).not.toHaveBeenCalled();
   });
 
-  it("step 5 – appends next page at correct offset", async () => {
+  it("step 5 - appends the next page at the end with the correct offset", async () => {
+    // simulate that we already have the first page loaded
     const firstPage = Array.from({ length: 30 }, (_, i) => makePokemonListItem(i + 1));
-    usePokemonListStore.setState({
-      list: firstPage,
-      offset: 30,
-      hasMore: true,
-      isLoading: false,
-      isLoadingMore: false,
-    });
+    testStore.setState({ list: firstPage, offset: 30, hasMore: true });
 
-    mockGetPokemonList.mockResolvedValueOnce(makePokemonListResponse(2, false));
-    mockGetPokemonById
-      .mockResolvedValueOnce(makePokemonResponse(31))
-      .mockResolvedValueOnce(makePokemonResponse(32));
+    mockFetchPage.mockResolvedValueOnce(makePage(2, false));
 
     const { result } = renderHook(() => usePokemonList());
 
@@ -159,18 +133,20 @@ describe("usePokemonList", () => {
       await result.current.fetchNextPage();
     });
 
-    expect(mockGetPokemonList).toHaveBeenCalledWith(30, 30);
+    // it should fetch from offset 30
+    expect(mockFetchPage).toHaveBeenCalledWith(30, 30);
+    // and the list now has 32 in total
     expect(result.current.list).toHaveLength(32);
-    expect(result.current.hasMore).toBe(false);
+    // hasMore is not exposed by the hook, so we check the store directly
+    expect(testStore.getState().hasMore).toBe(false);
     expect(result.current.isLoadingMore).toBe(false);
   });
 
-  it("step 6 – refreshList resets and re-fetches from page 0", async () => {
+  it("step 6 - refreshList resets the state and fetches again from 0", async () => {
     const firstPage = Array.from({ length: 30 }, (_, i) => makePokemonListItem(i + 1));
-    usePokemonListStore.setState({ list: firstPage, offset: 30 });
+    testStore.setState({ list: firstPage, offset: 30 });
 
-    mockGetPokemonList.mockResolvedValueOnce(makePokemonListResponse(1, true));
-    mockGetPokemonById.mockResolvedValueOnce(makePokemonResponse(1));
+    mockFetchPage.mockResolvedValueOnce(makePage(1, true));
 
     const { result } = renderHook(() => usePokemonList());
 
@@ -178,7 +154,7 @@ describe("usePokemonList", () => {
       await result.current.refreshList();
     });
 
-    expect(mockGetPokemonList).toHaveBeenCalledWith(0, 30);
+    expect(mockFetchPage).toHaveBeenCalledWith(0, 30);
     expect(result.current.list).toHaveLength(1);
   });
 });

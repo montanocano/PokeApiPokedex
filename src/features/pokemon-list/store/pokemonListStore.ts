@@ -1,15 +1,6 @@
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { devtools } from "zustand/middleware";
-import { getPokemonList, getPokemonListItems, PAGE_SIZE } from "../../../shared/api";
-import type { PokemonTypeName } from "../../../shared/api";
+import type { PokemonListRepository, PokemonListItem } from "../repositories/pokemonListRepository";
 
-export interface PokemonListItem {
-  id: number;
-  name: string;
-  sprite: string | null;
-  types: PokemonTypeName[];
-}
+export const PAGE_SIZE = 30;
 
 interface PokemonListState {
   list: PokemonListItem[];
@@ -29,88 +20,84 @@ interface PokemonListActions {
 
 export type PokemonListStore = PokemonListState & PokemonListActions;
 
-export const usePokemonListStore = create<PokemonListStore>()(
-  devtools(
-    immer((set, get) => ({
-      list: [],
-      offset: 0,
-      hasMore: true,
-      isLoading: false,
-      isLoadingMore: false,
-      error: null,
+// receives the repository so we can test it without depending on the real api
+export function createPokemonListStore(repository: PokemonListRepository) {
+  return (
+    set: (fn: (state: PokemonListStore) => void) => void,
+    get: () => PokemonListStore,
+  ): PokemonListStore => ({
+    // initial state
+    list: [],
+    offset: 0,
+    hasMore: true,
+    isLoading: false,
+    isLoadingMore: false,
+    error: null,
 
-      fetchPokemonList: async () => {
+    fetchPokemonList: async () => {
+      // set loading to true before the api call
+      set((state) => { state.isLoading = true; state.error = null; });
+      try {
+        const { items, hasMore } = await repository.fetchPage(0, PAGE_SIZE);
+        // when it finishes we save the data in the state
         set((state) => {
-          state.isLoading = true;
-          state.error = null;
-        });
-        try {
-          const response = await getPokemonList(0, PAGE_SIZE);
-          const items = await getPokemonListItems(response.results);
-          set((state) => {
-            state.list = items;
-            state.offset = PAGE_SIZE;
-            state.hasMore = response.next !== null;
-            state.isLoading = false;
-          });
-        } catch (e) {
-          set((state) => {
-            state.error = e instanceof Error ? e.message : "Something went wrong";
-            state.isLoading = false;
-          });
-        }
-      },
-
-      fetchNextPage: async () => {
-        const { isLoadingMore, hasMore, offset } = get();
-        if (isLoadingMore || !hasMore) return;
-
-        set((state) => {
-          state.isLoadingMore = true;
-          state.error = null;
-        });
-        try {
-          const response = await getPokemonList(offset, PAGE_SIZE);
-          const items = await getPokemonListItems(response.results);
-          set((state) => {
-            state.list.push(...items);
-            state.offset += PAGE_SIZE;
-            state.hasMore = response.next !== null;
-            state.isLoadingMore = false;
-          });
-        } catch (e) {
-          set((state) => {
-            state.error = e instanceof Error ? e.message : "Something went wrong";
-            state.isLoadingMore = false;
-          });
-        }
-      },
-
-      // Reset all state flags before re-fetching so the UI is never stuck
-      // in a loading/error state from a previous session or in-flight request
-      refreshList: async () => {
-        set((state) => {
-          state.list = [];
-          state.offset = 0;
-          state.hasMore = true;
+          state.list = items;
+          state.offset = PAGE_SIZE;
+          state.hasMore = hasMore;
           state.isLoading = false;
-          state.isLoadingMore = false;
-          state.error = null;
         });
-        await get().fetchPokemonList();
-      },
-
-      clearError: () => {
+      } catch (e) {
+        // if it fails we save the error message
         set((state) => {
-          state.error = null;
+          state.error = e instanceof Error ? e.message : "Something went wrong";
+          state.isLoading = false;
         });
-      },
-    })),
-    { name: "pokemon-list-store" },
-  ),
-);
+      }
+    },
 
-// Selectors
+    fetchNextPage: async () => {
+      const { isLoadingMore, hasMore, offset } = get();
+      // if its already loading or there are no more pages do nothing
+      if (isLoadingMore || !hasMore) return;
+
+      set((state) => { state.isLoadingMore = true; state.error = null; });
+      try {
+        const { items, hasMore: more } = await repository.fetchPage(offset, PAGE_SIZE);
+        set((state) => {
+          // add the new ones at the end of the current list
+          state.list.push(...items);
+          state.offset += PAGE_SIZE;
+          state.hasMore = more;
+          state.isLoadingMore = false;
+        });
+      } catch (e) {
+        set((state) => {
+          state.error = e instanceof Error ? e.message : "Something went wrong";
+          state.isLoadingMore = false;
+        });
+      }
+    },
+
+    // resets all the state and fetches again from the beginning
+    refreshList: async () => {
+      set((state) => {
+        state.list = [];
+        state.offset = 0;
+        state.hasMore = true;
+        state.isLoading = false;
+        state.isLoadingMore = false;
+        state.error = null;
+      });
+      await get().fetchPokemonList();
+    },
+
+    clearError: () => {
+      set((state) => { state.error = null; });
+    },
+  });
+}
+
+// selectors to use in the hook
 export const selectList = (state: PokemonListStore) => state.list;
 export const selectOffset = (state: PokemonListStore) => state.offset;
 export const selectHasMore = (state: PokemonListStore) => state.hasMore;

@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
+import { usePokemonListStore } from "../store/store";
 import {
-  usePokemonListStore,
   selectList,
   selectHasMore,
   selectIsLoading,
@@ -48,9 +48,11 @@ export function usePokemonList() {
     isLoading,
     isLoadingMore,
     error,
+    fetchPokemonList,
+    fetchNextPage,
+    refreshList,
     handleEndReached,
     handleRetry,
     handleRetryMore,
-    refreshList,
   };
 }

@@ -1,7 +1,7 @@
 import { apiClient } from "./client";
 import { isPokemonTypeName } from "./Types";
 import type { NamedAPIResource, PokemonListResponse, Pokemon, PokemonTypeName, TypeDetailResponse } from "./Types";
-import type { PokemonListItem } from "../../features/pokemon-list/store/pokemonListStore";
+import type { PokemonListItem } from "../../features/pokemon-list/repositories/pokemonListRepository";
 
 // service for pokemon list related api calls
 
