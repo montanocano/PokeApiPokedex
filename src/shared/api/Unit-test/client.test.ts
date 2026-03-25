@@ -21,14 +21,14 @@ import {
 } from "../client";
 import { ApiString } from "../apiString";
 
-// Step 1: ApiString
+// ─── Step 1: ApiString ────────────────────────────────────────────────────────
 describe("ApiString", () => {
   it("returns the correct PokeAPI base URL", () => {
     expect(ApiString.getAPIBase()).toBe("https://pokeapi.co/api/v2");
   });
 });
 
-// Step 2: Custom error classes
+// ─── Step 2: Custom error classes ─────────────────────────────────────────────
 describe("ApiTimeoutError", () => {
   it("has the correct name and message", () => {
     const err = new ApiTimeoutError();
@@ -62,7 +62,7 @@ describe("ApiHttpError", () => {
   });
 });
 
-// Steps 3–5: Interceptor behaviour testing the REAL apiClient
+// ─── Steps 3–5: Interceptor behaviour testing the REAL apiClient ─────────────
 describe("apiClient interceptor", () => {
   let mock: MockAdapter;
 
@@ -84,7 +84,7 @@ describe("apiClient interceptor", () => {
   it("step 4 – throws ApiNetworkError on network failure (no response)", async () => {
     mock.onGet("/pokemon/1").networkError();
     await expect(apiClient.get("/pokemon/1")).rejects.toBeInstanceOf(
-      ApiNetworkError
+      ApiNetworkError,
     );
   });
 
@@ -102,7 +102,7 @@ describe("apiClient interceptor", () => {
   it("step 5 – throws ApiHttpError on HTTP 500", async () => {
     mock.onGet("/pokemon").reply(500, {});
     await expect(apiClient.get("/pokemon")).rejects.toBeInstanceOf(
-      ApiHttpError
+      ApiHttpError,
     );
   });
 });

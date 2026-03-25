@@ -1,6 +1,9 @@
-import type { PokemonListRepository, PokemonListItem } from "../repositories/pokemonListRepository";
-
-export const PAGE_SIZE = 30;
+import { immer } from "zustand/middleware/immer";
+import type {
+  PokemonListRepository,
+  PokemonListItem,
+} from "../repositories/DefaultPokemonRepository";
+import { PAGE_SIZE } from "../../../shared/api";
 
 interface PokemonListState {
   list: PokemonListItem[];
@@ -22,10 +25,7 @@ export type PokemonListStore = PokemonListState & PokemonListActions;
 
 // receives the repository so we can test it without depending on the real api
 export function createPokemonListStore(repository: PokemonListRepository) {
-  return (
-    set: (fn: (state: PokemonListStore) => void) => void,
-    get: () => PokemonListStore,
-  ): PokemonListStore => ({
+  return immer<PokemonListStore>((set, get) => ({
     // initial state
     list: [],
     offset: 0,
@@ -36,7 +36,10 @@ export function createPokemonListStore(repository: PokemonListRepository) {
 
     fetchPokemonList: async () => {
       // set loading to true before the api call
-      set((state) => { state.isLoading = true; state.error = null; });
+      set((state) => {
+        state.isLoading = true;
+        state.error = null;
+      });
       try {
         const { items, hasMore } = await repository.fetchPage(0, PAGE_SIZE);
         // when it finishes we save the data in the state
@@ -60,9 +63,15 @@ export function createPokemonListStore(repository: PokemonListRepository) {
       // if its already loading or there are no more pages do nothing
       if (isLoadingMore || !hasMore) return;
 
-      set((state) => { state.isLoadingMore = true; state.error = null; });
+      set((state) => {
+        state.isLoadingMore = true;
+        state.error = null;
+      });
       try {
-        const { items, hasMore: more } = await repository.fetchPage(offset, PAGE_SIZE);
+        const { items, hasMore: more } = await repository.fetchPage(
+          offset,
+          PAGE_SIZE,
+        );
         set((state) => {
           // add the new ones at the end of the current list
           state.list.push(...items);
@@ -92,9 +101,11 @@ export function createPokemonListStore(repository: PokemonListRepository) {
     },
 
     clearError: () => {
-      set((state) => { state.error = null; });
+      set((state) => {
+        state.error = null;
+      });
     },
-  });
+  }));
 }
 
 // selectors to use in the hook
@@ -102,9 +113,12 @@ export const selectList = (state: PokemonListStore) => state.list;
 export const selectOffset = (state: PokemonListStore) => state.offset;
 export const selectHasMore = (state: PokemonListStore) => state.hasMore;
 export const selectIsLoading = (state: PokemonListStore) => state.isLoading;
-export const selectIsLoadingMore = (state: PokemonListStore) => state.isLoadingMore;
+export const selectIsLoadingMore = (state: PokemonListStore) =>
+  state.isLoadingMore;
 export const selectError = (state: PokemonListStore) => state.error;
-export const selectFetchPokemonList = (state: PokemonListStore) => state.fetchPokemonList;
-export const selectFetchNextPage = (state: PokemonListStore) => state.fetchNextPage;
+export const selectFetchPokemonList = (state: PokemonListStore) =>
+  state.fetchPokemonList;
+export const selectFetchNextPage = (state: PokemonListStore) =>
+  state.fetchNextPage;
 export const selectRefreshList = (state: PokemonListStore) => state.refreshList;
 export const selectClearError = (state: PokemonListStore) => state.clearError;

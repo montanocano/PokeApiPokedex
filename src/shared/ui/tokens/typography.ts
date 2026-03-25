@@ -1,4 +1,3 @@
-
 //Font size scale (fontSize)
 export const fontSize = {
   caption: 12,

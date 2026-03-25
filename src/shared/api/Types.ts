@@ -16,9 +16,24 @@ export interface PaginatedResponse<T> {
 
 // the 18 pokemon types - using a const tuple so we can derive both the type and the guard from it
 export const POKEMON_TYPE_NAMES = [
-  "normal", "fire", "water", "electric", "grass", "ice",
-  "fighting", "poison", "ground", "flying", "psychic", "bug",
-  "rock", "ghost", "dragon", "dark", "steel", "fairy",
+  "normal",
+  "fire",
+  "water",
+  "electric",
+  "grass",
+  "ice",
+  "fighting",
+  "poison",
+  "ground",
+  "flying",
+  "psychic",
+  "bug",
+  "rock",
+  "ghost",
+  "dragon",
+  "dark",
+  "steel",
+  "fairy",
 ] as const;
 
 export type PokemonTypeName = (typeof POKEMON_TYPE_NAMES)[number];

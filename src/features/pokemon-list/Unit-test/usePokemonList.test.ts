@@ -8,7 +8,11 @@ import { immer } from "zustand/middleware/immer";
 import { usePokemonList } from "../hooks/usePokemonList";
 import { createPokemonListStore } from "../store/pokemonListStore";
 import type { PokemonListStore } from "../store/pokemonListStore";
-import type { PokemonListRepository, PokemonListItem, PokemonPage } from "../repositories/pokemonListRepository";
+import type {
+  PokemonListRepository,
+  PokemonListItem,
+  PokemonPage,
+} from "../repositories/DefaultPokemonRepository";
 
 // mock of fetchPage to control what it returns in each test
 const mockFetchPage = jest.fn<Promise<PokemonPage>, [number, number]>();
@@ -43,9 +47,7 @@ function makePage(count: number, hasMore: boolean): PokemonPage {
 }
 
 function resetStore() {
-  testStore = createStore(
-    immer(createPokemonListStore(mockRepository)),
-  );
+  testStore = createStore(immer(createPokemonListStore(mockRepository)));
 }
 
 beforeEach(() => {
@@ -122,7 +124,9 @@ describe("usePokemonList", () => {
 
   it("step 5 - appends the next page at the end with the correct offset", async () => {
     // simulate that we already have the first page loaded
-    const firstPage = Array.from({ length: 30 }, (_, i) => makePokemonListItem(i + 1));
+    const firstPage = Array.from({ length: 30 }, (_, i) =>
+      makePokemonListItem(i + 1),
+    );
     testStore.setState({ list: firstPage, offset: 30, hasMore: true });
 
     mockFetchPage.mockResolvedValueOnce(makePage(2, false));
@@ -143,7 +147,9 @@ describe("usePokemonList", () => {
   });
 
   it("step 6 - refreshList resets the state and fetches again from 0", async () => {
-    const firstPage = Array.from({ length: 30 }, (_, i) => makePokemonListItem(i + 1));
+    const firstPage = Array.from({ length: 30 }, (_, i) =>
+      makePokemonListItem(i + 1),
+    );
     testStore.setState({ list: firstPage, offset: 30 });
 
     mockFetchPage.mockResolvedValueOnce(makePage(1, true));

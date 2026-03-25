@@ -1,7 +1,6 @@
 import { styled, GetProps } from "tamagui";
 import { Button as TamaguiButton } from "tamagui";
 
-
 export const Button = styled(TamaguiButton, {
   borderRadius: "$sm",
   pressStyle: { opacity: 0.85, scale: 0.97 },
@@ -11,19 +10,32 @@ export const Button = styled(TamaguiButton, {
       primary: {
         backgroundColor: "$primary",
         color: "$textOnPrimary",
-        pressStyle: { backgroundColor: "$primaryDark", opacity: 0.85, scale: 0.97 },
+        pressStyle: {
+          backgroundColor: "$primaryDark",
+          opacity: 0.85,
+          scale: 0.97,
+        },
       },
       secondary: {
         backgroundColor: "$transparent",
         borderWidth: 1.5,
         borderColor: "$primary",
         color: "$primary",
-        pressStyle: { backgroundColor: "$primary", color: "$textOnPrimary", opacity: 0.85, scale: 0.97 },
+        pressStyle: {
+          backgroundColor: "$primary",
+          color: "$textOnPrimary",
+          opacity: 0.85,
+          scale: 0.97,
+        },
       },
       ghost: {
         backgroundColor: "$transparent",
         color: "$primary",
-        pressStyle: { backgroundColor: "$surfaceHover", opacity: 0.85, scale: 0.97 },
+        pressStyle: {
+          backgroundColor: "$surfaceHover",
+          opacity: 0.85,
+          scale: 0.97,
+        },
       },
     },
 

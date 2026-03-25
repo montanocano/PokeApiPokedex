@@ -44,8 +44,14 @@ function makePokemon(overrides: Partial<Pokemon> = {}): Pokemon {
       front_default: "https://example.com/front.png",
       front_shiny: "https://example.com/shiny.png",
       other: {
-        "official-artwork": { front_default: "https://example.com/artwork.png", front_shiny: null },
-        home: { front_default: "https://example.com/home.png", front_shiny: null },
+        "official-artwork": {
+          front_default: "https://example.com/artwork.png",
+          front_shiny: null,
+        },
+        home: {
+          front_default: "https://example.com/home.png",
+          front_shiny: null,
+        },
       },
     },
     moves: Array.from({ length: 35 }, (_, i) => ({
@@ -58,7 +64,10 @@ function makePokemon(overrides: Partial<Pokemon> = {}): Pokemon {
         },
       ],
     })),
-    species: { name: "pikachu", url: "https://pokeapi.co/api/v2/pokemon-species/25/" },
+    species: {
+      name: "pikachu",
+      url: "https://pokeapi.co/api/v2/pokemon-species/25/",
+    },
     ...overrides,
   };
 }
@@ -80,22 +89,40 @@ describe("parsePokemonDetail", () => {
   it("step 2 – converts stats to camelCase ParsedStat[]", () => {
     const detail = parsePokemonDetail(makePokemon());
     expect(detail.stats).toHaveLength(2);
-    expect(detail.stats[0]).toEqual({ baseStat: 35, effort: 0, statName: "hp" });
-    expect(detail.stats[1]).toEqual({ baseStat: 55, effort: 0, statName: "attack" });
+    expect(detail.stats[0]).toEqual({
+      baseStat: 35,
+      effort: 0,
+      statName: "hp",
+    });
+    expect(detail.stats[1]).toEqual({
+      baseStat: 55,
+      effort: 0,
+      statName: "attack",
+    });
   });
 
   it("step 3 – converts abilities to ParsedAbility[]", () => {
     const detail = parsePokemonDetail(makePokemon());
     expect(detail.abilities).toHaveLength(2);
-    expect(detail.abilities[0]).toEqual({ abilityName: "static", isHidden: false, slot: 1 });
-    expect(detail.abilities[1]).toEqual({ abilityName: "lightning-rod", isHidden: true, slot: 3 });
+    expect(detail.abilities[0]).toEqual({
+      abilityName: "static",
+      isHidden: false,
+      slot: 1,
+    });
+    expect(detail.abilities[1]).toEqual({
+      abilityName: "lightning-rod",
+      isHidden: true,
+      slot: 3,
+    });
   });
 
   it("step 4 – extracts sprite urls into ParsedSprites", () => {
     const detail = parsePokemonDetail(makePokemon());
     expect(detail.sprites.frontDefault).toBe("https://example.com/front.png");
     expect(detail.sprites.frontShiny).toBe("https://example.com/shiny.png");
-    expect(detail.sprites.officialArtwork).toBe("https://example.com/artwork.png");
+    expect(detail.sprites.officialArtwork).toBe(
+      "https://example.com/artwork.png",
+    );
     expect(detail.sprites.home).toBe("https://example.com/home.png");
   });
 

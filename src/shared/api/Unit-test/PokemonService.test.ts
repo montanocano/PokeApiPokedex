@@ -37,9 +37,7 @@ const fakePokemonListResponse = {
   count: 1302,
   next: "https://pokeapi.co/api/v2/pokemon?offset=30&limit=30",
   previous: null,
-  results: [
-    { name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" },
-  ],
+  results: [{ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" }],
 };
 
 const fakePokemon = {
@@ -54,7 +52,10 @@ const fakePokemon = {
   sprites: {
     front_default: "https://example.com/bulbasaur.png",
     front_shiny: null,
-    other: { "official-artwork": { front_default: null, front_shiny: null }, home: { front_default: null, front_shiny: null } },
+    other: {
+      "official-artwork": { front_default: null, front_shiny: null },
+      home: { front_default: null, front_shiny: null },
+    },
   },
   moves: [],
   species: { name: "bulbasaur", url: "" },
@@ -64,7 +65,13 @@ const fakeTypeResponse = {
   id: 10,
   name: "fire",
   pokemon: [
-    { pokemon: { name: "charmander", url: "https://pokeapi.co/api/v2/pokemon/4/" }, slot: 1 },
+    {
+      pokemon: {
+        name: "charmander",
+        url: "https://pokeapi.co/api/v2/pokemon/4/",
+      },
+      slot: 1,
+    },
   ],
 };
 
@@ -155,6 +162,8 @@ describe("extractIdFromUrl", () => {
   });
 
   it("works for three-digit ids", () => {
-    expect(extractIdFromUrl("https://pokeapi.co/api/v2/pokemon/150/")).toBe(150);
+    expect(extractIdFromUrl("https://pokeapi.co/api/v2/pokemon/150/")).toBe(
+      150,
+    );
   });
 });

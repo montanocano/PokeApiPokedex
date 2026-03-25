@@ -1,5 +1,12 @@
 import { apiClient } from "./client";
-import type { Pokemon, PokemonDetail, ParsedStat, ParsedAbility, ParsedSprites, ParsedMove } from "./Types";
+import type {
+  Pokemon,
+  PokemonDetail,
+  ParsedStat,
+  ParsedAbility,
+  ParsedSprites,
+  ParsedMove,
+} from "./Types";
 
 // service for the pokemon detail screen
 // fetches the raw data and parses it into camelCase so the UI doesnt have to deal with snake_case
@@ -63,7 +70,9 @@ function parsePokemonDetail(raw: Pokemon): PokemonDetail {
 }
 
 // fetch pokemon detail by id and return parsed data ready for the UI
-export async function getPokemonDetail(id: number | string): Promise<PokemonDetail> {
+export async function getPokemonDetail(
+  id: number | string,
+): Promise<PokemonDetail> {
   try {
     const raw = await apiClient.get<Pokemon>(`/pokemon/${id}`);
     return parsePokemonDetail(raw);

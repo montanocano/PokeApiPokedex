@@ -68,10 +68,10 @@ function createClient() {
       return Promise.reject(
         new ApiHttpError(
           error.response.status,
-          error.response.statusText || "Unknown error"
-        )
+          error.response.statusText || "Unknown error",
+        ),
       );
-    }
+    },
   );
 
   return {
