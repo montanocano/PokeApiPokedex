@@ -16,12 +16,6 @@ module.exports = {
     "!src/**/index.ts",
     "!src/**/index.tsx",
   ],
-  testMatch: [
-    "**/*.test.ts",
-    "**/*.test.tsx",
-  ],
-  testPathIgnorePatterns: [
-    "/node_modules/",
-    "/.expo/",
-  ],
+  testMatch: ["**/*.test.ts", "**/*.test.tsx"],
+  testPathIgnorePatterns: ["/node_modules/", "/.expo/"],
 };
