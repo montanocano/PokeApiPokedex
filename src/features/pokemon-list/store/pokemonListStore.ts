@@ -59,9 +59,9 @@ export function createPokemonListStore(repository: PokemonListRepository) {
     },
 
     fetchNextPage: async () => {
-      const { isLoadingMore, hasMore, offset } = get();
+      const { isLoading, isLoadingMore, hasMore, offset } = get();
       // if its already loading or there are no more pages do nothing
-      if (isLoadingMore || !hasMore) return;
+      if (isLoading || isLoadingMore || !hasMore) return;
 
       set((state) => {
         state.isLoadingMore = true;

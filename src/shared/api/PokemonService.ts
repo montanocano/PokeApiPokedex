@@ -54,25 +54,43 @@ function toPokemonListItem(pokemon: Pokemon): PokemonListItem {
   };
 }
 
-// fetches a batch of pokemon by their name references and transforms them
-// batches requests in groups of MAX_CONCURRENT to avoid hitting rate limits
+// fetches pokemon by their name references and transforms them
+// uses a concurrency pool so up to MAX_CONCURRENT requests run at all times
+// instead of waiting for each batch to finish before starting the next
 export async function getPokemonListItems(
   results: NamedAPIResource[],
 ): Promise<PokemonListItem[]> {
-  const items: PokemonListItem[] = [];
+  let running = 0;
+  let index = 0;
+  const items: (PokemonListItem | null)[] = new Array(results.length).fill(
+    null,
+  );
 
-  for (let i = 0; i < results.length; i += MAX_CONCURRENT) {
-    const batch = results.slice(i, i + MAX_CONCURRENT);
-    const batchItems = await Promise.all(
-      batch.map(async (ref: NamedAPIResource) => {
-        const pokemon = await getPokemonById(ref.name);
-        return toPokemonListItem(pokemon);
-      }),
-    );
-    items.push(...batchItems);
-  }
+  return new Promise((resolve, reject) => {
+    function next() {
+      while (running < MAX_CONCURRENT && index < results.length) {
+        const i = index++;
+        running++;
+        getPokemonById(results[i].name)
+          .then((pokemon) => {
+            items[i] = toPokemonListItem(pokemon);
+            running--;
+            if (index >= results.length && running === 0) {
+              resolve(items as PokemonListItem[]);
+            } else {
+              next();
+            }
+          })
+          .catch(reject);
+      }
+    }
 
-  return items;
+    if (results.length === 0) {
+      resolve([]);
+    } else {
+      next();
+    }
+  });
 }
 
 // get all pokemon of a specific type
