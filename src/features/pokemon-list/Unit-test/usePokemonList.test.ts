@@ -11,7 +11,6 @@ import type {
   PokemonListItem,
   PokemonPage,
 } from "../repositories/DefaultPokemonRepository";
-import { useStore } from "zustand";
 
 // mock of fetchPage to control what it returns in each test
 const mockFetchPage = jest.fn<Promise<PokemonPage>, [number, number]>();
