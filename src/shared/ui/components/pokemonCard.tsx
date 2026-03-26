@@ -73,7 +73,7 @@ function PokemonCardBase({ item, onPress }: PokemonCardProps) {
         ) : (
           <SpritePlaceholder>
             <Text fontSize="$1" color="$textDisabled">
-              Who's that Pokémon?
+              Who&apos;s that Pokémon?
             </Text>
           </SpritePlaceholder>
         )}

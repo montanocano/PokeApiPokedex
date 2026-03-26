@@ -11,6 +11,7 @@ import type {
   PokemonListItem,
   PokemonPage,
 } from "../repositories/DefaultPokemonRepository";
+import { useStore } from "zustand";
 
 // mock of fetchPage to control what it returns in each test
 const mockFetchPage = jest.fn<Promise<PokemonPage>, [number, number]>();
@@ -24,13 +25,14 @@ const mockRepository: PokemonListRepository = {
 let mockTestStore: StoreApi<PokemonListStore>;
 
 // we replace store.ts so the hook uses our test store
-jest.mock("../store/store", () => ({
-  get usePokemonListStore() {
-    const { useStore } = require("zustand");
-    return (selector: (state: PokemonListStore) => unknown) =>
-      useStore(mockTestStore, selector);
-  },
-}));
+jest.mock("../store/store", () => {
+  const zustand = require("zustand"); // ✅ dentro del mock
+
+  return {
+    usePokemonListStore: (selector: (state: PokemonListStore) => unknown) =>
+      zustand.useStore(mockTestStore, selector),
+  };
+});
 
 // creates a fake pokemon with the given id
 function makePokemonListItem(id: number): PokemonListItem {

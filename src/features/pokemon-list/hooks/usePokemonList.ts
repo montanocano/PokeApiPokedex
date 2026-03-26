@@ -38,11 +38,6 @@ export function usePokemonList() {
     fetchPokemonList();
   }, [clearError, fetchPokemonList]);
 
-  const handleRetryMore = useCallback(() => {
-    clearError();
-    fetchNextPage();
-  }, [clearError, fetchNextPage]);
-
   return {
     list,
     isLoading,
