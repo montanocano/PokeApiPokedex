@@ -25,14 +25,11 @@ const mockRepository: PokemonListRepository = {
 let mockTestStore: StoreApi<PokemonListStore>;
 
 // we replace store.ts so the hook uses our test store
-jest.mock("../store/store", () => {
-  const zustand = require("zustand"); // ✅ dentro del mock
-
-  return {
-    usePokemonListStore: (selector: (state: PokemonListStore) => unknown) =>
-      zustand.useStore(mockTestStore, selector),
-  };
-});
+jest.mock("../store/store", () => ({
+  usePokemonListStore: (selector: (state: PokemonListStore) => unknown) =>
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require("zustand").useStore(mockTestStore, selector),
+}));
 
 // creates a fake pokemon with the given id
 function makePokemonListItem(id: number): PokemonListItem {
