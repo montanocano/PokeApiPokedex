@@ -48,11 +48,8 @@ export function usePokemonList() {
     isLoading,
     isLoadingMore,
     error,
-    fetchPokemonList,
-    fetchNextPage,
     refreshList,
     handleEndReached,
     handleRetry,
-    handleRetryMore,
   };
 }

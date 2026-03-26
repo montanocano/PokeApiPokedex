@@ -9,7 +9,7 @@ import { YStack, XStack, Text, styled } from "tamagui";
 import { Button, PokemonCard } from "../components";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
-import { primaryColors } from "../tokens/colors";
+import { primaryColors, lightColors } from "../tokens/colors";
 
 // Styled components (project tokens)
 
@@ -144,7 +144,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: lightColors.background,
   },
   listContent: {
     paddingHorizontal: 32,

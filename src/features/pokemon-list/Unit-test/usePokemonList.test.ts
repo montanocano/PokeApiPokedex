@@ -3,8 +3,6 @@
 
 import { renderHook, act } from "@testing-library/react-native";
 import { createStore, type StoreApi } from "zustand/vanilla";
-import { useStore } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import { usePokemonList } from "../hooks/usePokemonList";
 import { createPokemonListStore } from "../store/pokemonListStore";
 import type { PokemonListStore } from "../store/pokemonListStore";
@@ -22,14 +20,15 @@ const mockRepository: PokemonListRepository = {
 };
 
 // test store, we reset it before each test
-let testStore: StoreApi<PokemonListStore>;
+// prefixed with "mock" so jest.mock() can reference it
+let mockTestStore: StoreApi<PokemonListStore>;
 
 // we replace store.ts so the hook uses our test store
-// useStore (not getState) keeps the hook subscribed to changes
 jest.mock("../store/store", () => ({
   get usePokemonListStore() {
+    const { useStore } = require("zustand");
     return (selector: (state: PokemonListStore) => unknown) =>
-      useStore(testStore, selector);
+      useStore(mockTestStore, selector);
   },
 }));
 
@@ -47,7 +46,7 @@ function makePage(count: number, hasMore: boolean): PokemonPage {
 }
 
 function resetStore() {
-  testStore = createStore(immer(createPokemonListStore(mockRepository)));
+  mockTestStore = createStore(createPokemonListStore(mockRepository));
 }
 
 beforeEach(() => {
@@ -56,30 +55,26 @@ beforeEach(() => {
 });
 
 describe("usePokemonList", () => {
-  it("step 1 - loads the list correctly and disables loading when done", async () => {
+  it("step 1 - loads the list on mount and disables loading when done", async () => {
     mockFetchPage.mockResolvedValueOnce(makePage(2, false));
 
     const { result } = renderHook(() => usePokemonList());
 
-    await act(async () => {
-      await result.current.fetchPokemonList();
-    });
+    // the useEffect calls fetchPokemonList on mount
+    await act(async () => {});
 
-    // it should have fetched from offset 0
     expect(mockFetchPage).toHaveBeenCalledWith(0, 30);
     expect(result.current.list).toHaveLength(2);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
   });
 
-  it("step 2 - saves the error if the call fails", async () => {
+  it("step 2 - saves the error if the initial load fails", async () => {
     mockFetchPage.mockRejectedValueOnce(new Error("network error"));
 
     const { result } = renderHook(() => usePokemonList());
 
-    await act(async () => {
-      await result.current.fetchPokemonList();
-    });
+    await act(async () => {});
 
     expect(result.current.error).toBe("network error");
     expect(result.current.isLoading).toBe(false);
@@ -91,76 +86,112 @@ describe("usePokemonList", () => {
 
     const { result } = renderHook(() => usePokemonList());
 
-    await act(async () => {
-      await result.current.fetchPokemonList();
-    });
+    await act(async () => {});
 
     expect(result.current.error).toBe("Something went wrong");
   });
 
-  it("step 3 - does not call the api if already loading more", async () => {
-    testStore.setState({ isLoadingMore: true });
+  it("step 3 - handleEndReached does not fetch if already loading more", async () => {
+    mockFetchPage.mockResolvedValueOnce(makePage(0, true));
 
     const { result } = renderHook(() => usePokemonList());
+    await act(async () => {});
+
+    // set isLoadingMore via store
+    act(() => {
+      mockTestStore.setState({ isLoadingMore: true });
+    });
+
+    mockFetchPage.mockClear();
 
     await act(async () => {
-      await result.current.fetchNextPage();
+      result.current.handleEndReached();
     });
 
     expect(mockFetchPage).not.toHaveBeenCalled();
   });
 
-  it("step 4 - does not call the api if there are no more pages", async () => {
-    testStore.setState({ hasMore: false });
-
-    const { result } = renderHook(() => usePokemonList());
-
-    await act(async () => {
-      await result.current.fetchNextPage();
-    });
-
-    expect(mockFetchPage).not.toHaveBeenCalled();
-  });
-
-  it("step 5 - appends the next page at the end with the correct offset", async () => {
-    // simulate that we already have the first page loaded
-    const firstPage = Array.from({ length: 30 }, (_, i) =>
-      makePokemonListItem(i + 1),
-    );
-    testStore.setState({ list: firstPage, offset: 30, hasMore: true });
-
+  it("step 4 - handleEndReached does not fetch if there are no more pages", async () => {
     mockFetchPage.mockResolvedValueOnce(makePage(2, false));
 
     const { result } = renderHook(() => usePokemonList());
+    await act(async () => {});
+
+    mockFetchPage.mockClear();
 
     await act(async () => {
-      await result.current.fetchNextPage();
+      result.current.handleEndReached();
     });
 
-    // it should fetch from offset 30
+    // hasMore is false so it should not fetch
+    expect(mockFetchPage).not.toHaveBeenCalled();
+  });
+
+  it("step 5 - handleEndReached appends the next page with the correct offset", async () => {
+    // first page loads on mount
+    const firstItems = Array.from({ length: 30 }, (_, i) =>
+      makePokemonListItem(i + 1),
+    );
+    mockFetchPage.mockResolvedValueOnce({ items: firstItems, hasMore: true });
+
+    const { result } = renderHook(() => usePokemonList());
+    await act(async () => {});
+
+    expect(result.current.list).toHaveLength(30);
+    mockFetchPage.mockClear();
+
+    // second page via handleEndReached
+    mockFetchPage.mockResolvedValueOnce(makePage(2, false));
+
+    await act(async () => {
+      result.current.handleEndReached();
+    });
+
     expect(mockFetchPage).toHaveBeenCalledWith(30, 30);
-    // and the list now has 32 in total
     expect(result.current.list).toHaveLength(32);
-    // hasMore is not exposed by the hook, so we check the store directly
-    expect(testStore.getState().hasMore).toBe(false);
+    expect(mockTestStore.getState().hasMore).toBe(false);
     expect(result.current.isLoadingMore).toBe(false);
   });
 
   it("step 6 - refreshList resets the state and fetches again from 0", async () => {
-    const firstPage = Array.from({ length: 30 }, (_, i) =>
-      makePokemonListItem(i + 1),
-    );
-    testStore.setState({ list: firstPage, offset: 30 });
-
-    mockFetchPage.mockResolvedValueOnce(makePage(1, true));
+    // initial load
+    mockFetchPage.mockResolvedValueOnce(makePage(30, true));
 
     const { result } = renderHook(() => usePokemonList());
+    await act(async () => {});
+
+    expect(result.current.list).toHaveLength(30);
+    mockFetchPage.mockClear();
+
+    // refresh
+    mockFetchPage.mockResolvedValueOnce(makePage(1, true));
 
     await act(async () => {
-      await result.current.refreshList();
+      result.current.refreshList();
     });
 
     expect(mockFetchPage).toHaveBeenCalledWith(0, 30);
     expect(result.current.list).toHaveLength(1);
+  });
+
+  it("step 7 - handleRetry clears error and fetches again", async () => {
+    // initial load fails
+    mockFetchPage.mockRejectedValueOnce(new Error("fail"));
+
+    const { result } = renderHook(() => usePokemonList());
+    await act(async () => {});
+
+    expect(result.current.error).toBe("fail");
+    mockFetchPage.mockClear();
+
+    // retry succeeds
+    mockFetchPage.mockResolvedValueOnce(makePage(2, false));
+
+    await act(async () => {
+      result.current.handleRetry();
+    });
+
+    expect(result.current.error).toBeNull();
+    expect(result.current.list).toHaveLength(2);
   });
 });

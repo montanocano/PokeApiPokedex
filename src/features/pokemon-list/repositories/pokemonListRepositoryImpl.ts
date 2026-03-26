@@ -13,7 +13,7 @@ import type {
 const MAX_REGULAR_ID = 10000;
 
 // real implementation of the repository that calls the api
-export const pokemonListRepository: PokemonListRepository = {
+export const defaultPokemonListRepository: PokemonListRepository = {
   fetchPage: async (
     offset: number,
     limit: number = PAGE_SIZE,
