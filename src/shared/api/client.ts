@@ -39,7 +39,7 @@ export interface ApiClient {
 // 10 sec timeout like the PRD says
 const TIMEOUT = 10000;
 
-function createClient(): ApiClient {
+function createClient() {
   const client = axios.create({
     baseURL: ApiString.getAPIBase(),
     timeout: TIMEOUT,
@@ -68,15 +68,22 @@ function createClient(): ApiClient {
       return Promise.reject(
         new ApiHttpError(
           error.response.status,
-          error.response.statusText || "Unknown error"
-        )
+          error.response.statusText || "Unknown error",
+        ),
       );
-    }
+    },
   );
 
-  // cast to our wrapper type since the interceptor changes the return type
-  return client as unknown as ApiClient;
+  return {
+    typedClient: client as unknown as ApiClient,
+    axiosInstance: client,
+  };
 }
 
 // single instance for the whole app
-export const apiClient = createClient();
+const { typedClient, axiosInstance } = createClient();
+
+export const apiClient = typedClient;
+
+// exposed only for unit tests — allows axios-mock-adapter to intercept the real instance
+export const _axiosInstance = axiosInstance;

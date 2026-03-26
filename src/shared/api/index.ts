@@ -29,8 +29,10 @@ export { isPokemonTypeName, POKEMON_TYPE_NAMES } from "./Types";
 export {
   getPokemonList,
   getPokemonById,
+  getPokemonListItems,
   getPokemonByType,
   extractIdFromUrl,
+  PAGE_SIZE,
 } from "./PokemonService";
 
 export { getPokemonDetail, parsePokemonDetail } from "./pokemonDetailService";

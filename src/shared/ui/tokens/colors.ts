@@ -92,7 +92,10 @@ export const statusColors = {
 export const allColors = {
   ...primaryColors,
   ...Object.fromEntries(
-    Object.entries(typeColors).map(([key, val]) => [`type${key[0].toUpperCase()}${key.slice(1)}`, val])
+    Object.entries(typeColors).map(([key, val]) => [
+      `type${key[0].toUpperCase()}${key.slice(1)}`,
+      val,
+    ]),
   ),
   ...lightColors,
   ...statusColors,

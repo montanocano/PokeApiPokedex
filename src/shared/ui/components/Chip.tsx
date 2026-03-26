@@ -96,7 +96,10 @@ export function Chip({
       accessibilityLabel={`${label} type filter`}
       accessibilityState={{ selected }}
     >
-      <ChipLabel chipSize={chipSize} color={variant === "filled" ? textColor : color}>
+      <ChipLabel
+        chipSize={chipSize}
+        color={variant === "filled" ? textColor : color}
+      >
         {label}
       </ChipLabel>
     </ChipContainer>

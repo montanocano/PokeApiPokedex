@@ -1,4 +1,3 @@
-
 export const sizes = {
   // Touch targets (WCAG minimum 44px)
   touchTarget: 44,
