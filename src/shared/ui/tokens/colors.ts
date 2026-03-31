@@ -73,9 +73,9 @@ export const darkColors = {
 
 // 4. Stat range colors (used in the detail screen progress bars)
 export const statColors = {
-  statLow: "#E74C3C",    // base stat < 50
-  statMid: "#F39C12",    // base stat 50–79
-  statHigh: "#2ECC71",   // base stat >= 80
+  statLow: "#E74C3C", // base stat < 50
+  statMid: "#F39C12", // base stat 50–79
+  statHigh: "#2ECC71", // base stat >= 80
 } as const;
 
 // 5. Status colors (success, error, warning)
