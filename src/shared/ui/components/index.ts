@@ -1,3 +1,4 @@
+// Shared reusable components
 export { Button } from "./button";
 export type { ButtonProps } from "./button";
 
@@ -13,3 +14,10 @@ export { LoadingSpinner } from "./LoadingSpinner";
 export { ErrorMessage } from "./ErrorMessage";
 
 export { PokemonCard } from "./pokemonCard";
+
+// Pokemon detail section components
+export { DetailHeader } from "./DetailHeader";
+export { PokemonHeroSection } from "./PokemonHeroSection";
+export { AboutSection } from "./AboutSection";
+export { StatsSection } from "./StatsSection";
+export { StatRow } from "./StatRow";

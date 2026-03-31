@@ -71,7 +71,14 @@ export const darkColors = {
   shadowStrong: "rgba(0, 0, 0, 0.5)",
 } as const;
 
-// 4. Status colors (success, error, warning)
+// 4. Stat range colors (used in the detail screen progress bars)
+export const statColors = {
+  statLow: "#E74C3C",    // base stat < 50
+  statMid: "#F39C12",    // base stat 50–79
+  statHigh: "#2ECC71",   // base stat >= 80
+} as const;
+
+// 5. Status colors (success, error, warning)
 export const statusColors = {
   success: "#16A34A",
   successLight: "#22C55E",
@@ -99,5 +106,6 @@ export const allColors = {
   ),
   ...lightColors,
   ...statusColors,
+  ...statColors,
   transparent: "transparent",
 } as const;
