@@ -30,4 +30,3 @@ export const STAT_LABELS: Record<string, string> = {
 
 // Maximum base stat value — used to scale progress bars
 export const MAX_STAT = 255;
-
