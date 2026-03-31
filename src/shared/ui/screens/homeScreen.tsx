@@ -63,10 +63,12 @@ export default function HomeScreen() {
   const renderItem = useCallback(
     ({ item }: { item: PokemonListItem }) => (
       <PokemonCard
-          item={item}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress={() => router.push({ pathname: "/[id]" as any, params: { id: item.id } })}
-        />
+        item={item}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onPress={() =>
+          router.push({ pathname: "/[id]" as any, params: { id: item.id } })
+        }
+      />
     ),
     [router],
   );
