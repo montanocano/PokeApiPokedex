@@ -2,13 +2,8 @@ import { YStack, XStack, Text } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "./Card";
 import { Chip } from "./Chip";
-import { lightColors } from "../tokens/colors";
 import type { ParsedAbility } from "../../api/Types";
-import {
-  formatHeight,
-  formatWeight,
-  capitalise,
-} from "../../utils/formatters";
+import { formatHeight, formatWeight, capitalise } from "../../utils/formatters";
 
 interface AboutSectionProps {
   height: number;
@@ -75,7 +70,7 @@ export function AboutSection({
             <Chip
               key={ab.slot}
               label={capitalise(ab.abilityName.replace(/-/g, " "))}
-              color={ab.isHidden ? lightColors.textDisabled : accentColor}
+              color={ab.isHidden ? "$textDisabled" : accentColor}
               chipSize="md"
             />
           ))}

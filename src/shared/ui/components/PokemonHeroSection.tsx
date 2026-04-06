@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import { Chip } from "./Chip";
 import type { PokemonTypeName } from "../../api/Types";
 import { capitalise } from "../../utils/formatters";
+import { lightColors } from "../tokens/colors";
 
 interface PokemonHeroSectionProps {
   name: string;
@@ -27,7 +28,7 @@ export function PokemonHeroSection({
             <Chip
               key={type}
               label={capitalise(type)}
-              color="rgba(255,255,255,0.35)"
+              color={lightColors.overlayWhiteMid}
               chipSize="md"
             />
           ))}
@@ -44,7 +45,7 @@ export function PokemonHeroSection({
           />
         ) : (
           <View style={[styles.pokemonImage, styles.imagePlaceholder]}>
-            <Text color="rgba(255,255,255,0.4)" fontSize="$6">
+            <Text color={lightColors.overlayWhiteStrong} fontSize="$6">
               ?
             </Text>
           </View>
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     height: 180,
   },
   imagePlaceholder: {
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: lightColors.overlayWhite,
     borderRadius: 90,
     alignItems: "center",
     justifyContent: "center",
