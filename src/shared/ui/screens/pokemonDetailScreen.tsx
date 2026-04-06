@@ -10,12 +10,10 @@ import { YStack, Text } from "tamagui";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "../components/button";
-import {
-  DetailHeader,
-  PokemonHeroSection,
-  AboutSection,
-  StatsSection,
-} from "../components";
+import { DetailHeader } from "../components/DetailHeader";
+import { PokemonHeroSection } from "../components/PokemonHeroSection";
+import { AboutSection } from "../components/AboutSection";
+import { StatsSection } from "../components/StatsSection";
 import { usePokemonDetail } from "../../../features/pokemon-details/hooks/usePokemonDetail";
 import { typeColors, lightColors, primaryColors } from "../tokens/colors";
 import type { PokemonTypeName } from "../../api/Types";
