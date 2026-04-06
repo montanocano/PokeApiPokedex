@@ -5,8 +5,8 @@ import {
   STAT_LABELS,
   MAX_STAT,
   capitalise,
-} from "../../../features/pokemon-details/utils/formatters";
-import { statColors } from "../tokens/colors";
+} from "../../utils/formatters";
+import { statColors, lightColors } from "../tokens/colors";
 
 // Presentation rule: maps a stat value range to a display color
 function getStatColor(value: number): string {
@@ -58,12 +58,12 @@ const styles = StyleSheet.create({
   divider: {
     width: 1,
     height: 16,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: lightColors.border,
   },
   progressTrack: {
     flex: 1,
     height: 6,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: lightColors.border,
     borderRadius: 3,
     overflow: "hidden",
   },

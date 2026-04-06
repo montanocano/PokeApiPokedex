@@ -3,7 +3,7 @@ import { YStack, XStack, Text } from "tamagui";
 import { Image } from "expo-image";
 import { Chip } from "./Chip";
 import type { PokemonTypeName } from "../../api/Types";
-import { capitalise } from "../../../features/pokemon-details/utils/formatters";
+import { capitalise } from "../../utils/formatters";
 
 interface PokemonHeroSectionProps {
   name: string;

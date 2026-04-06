@@ -8,7 +8,7 @@ import {
   formatHeight,
   formatWeight,
   capitalise,
-} from "../../../features/pokemon-details/utils/formatters";
+} from "../../utils/formatters";
 
 interface AboutSectionProps {
   height: number;

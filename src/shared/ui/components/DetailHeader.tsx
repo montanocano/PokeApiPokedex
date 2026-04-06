@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { XStack, Text } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import { formatId } from "../../../features/pokemon-details/utils/formatters";
+import { formatId } from "../../utils/formatters";
 
 interface DetailHeaderProps {
   pokemonId: number;
