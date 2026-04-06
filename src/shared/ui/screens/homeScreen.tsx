@@ -65,7 +65,7 @@ export default function HomeScreen() {
       <PokemonCard
         item={item}
         onPress={() =>
-          router.push({ pathname: "/[id]" as any, params: { id: item.id } })
+          router.push({ pathname: "/[id]", params: { id: item.id } })
         }
       />
     ),
