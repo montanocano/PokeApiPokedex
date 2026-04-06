@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { XStack, Text } from "tamagui";
 import type { ParsedStat } from "../../api/Types";
 import { STAT_LABELS, MAX_STAT, capitalise } from "../../utils/formatters";
-import { statColors, lightColors } from "../tokens/colors";
+import { statColors } from "../tokens/colors";
 import { radius } from "../tokens/radius";
 
 // Presentation rule: maps a stat value range to a display color
@@ -32,11 +32,17 @@ export function StatRow({ stat }: StatRowProps) {
       >
         {label}
       </Text>
-      <View style={styles.divider} />
+      <XStack width={1} height={16} backgroundColor="$border" />
       <Text width={32} fontSize="$1" fontWeight="700" style={{ color }}>
         {stat.baseStat}
       </Text>
-      <View style={styles.progressTrack}>
+      <XStack
+        flex={1}
+        height={6}
+        backgroundColor="$border"
+        borderRadius={radius.full}
+        overflow="hidden"
+      >
         <View
           style={[
             styles.progressFill,
@@ -46,24 +52,12 @@ export function StatRow({ stat }: StatRowProps) {
             },
           ]}
         />
-      </View>
+      </XStack>
     </XStack>
   );
 }
 
 const styles = StyleSheet.create({
-  divider: {
-    width: 1,
-    height: 16,
-    backgroundColor: lightColors.border,
-  },
-  progressTrack: {
-    flex: 1,
-    height: 6,
-    backgroundColor: lightColors.border,
-    borderRadius: radius.full,
-    overflow: "hidden",
-  },
   progressFill: {
     height: "100%",
     borderRadius: radius.full,

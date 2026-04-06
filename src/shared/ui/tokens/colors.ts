@@ -51,9 +51,9 @@ export const lightColors = {
   overlay: "rgba(0, 0, 0, 0.5)",
   shadow: "rgba(0, 0, 0, 0.1)",
   shadowStrong: "rgba(0, 0, 0, 0.15)",
-  overlayWhite: "rgba(255,255,255,0.2)",
-  overlayWhiteMid: "rgba(255,255,255,0.35)",
-  overlayWhiteStrong: "rgba(255,255,255,0.4)",
+  overlayWhite: "rgba(255, 255, 255, 0.2)",
+  overlayWhiteMid: "rgba(255, 255, 255, 0.35)",
+  overlayWhiteStrong: "rgba(255, 255, 255, 0.4)",
 } as const;
 
 export const darkColors = {

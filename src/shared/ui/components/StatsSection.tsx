@@ -1,4 +1,3 @@
-import { View, StyleSheet } from "react-native";
 import { YStack, XStack, Text } from "tamagui";
 import { Card } from "./Card";
 import { StatRow } from "./StatRow";
@@ -29,7 +28,7 @@ export function StatsSection({ stats, total }: StatsSectionProps) {
           >
             Total
           </Text>
-          <View style={styles.divider} />
+          <XStack width={1} height={16} backgroundColor="$border" />
           <Text fontSize="$2" fontWeight="700" color="$textPrimary">
             {total}
           </Text>
@@ -38,11 +37,3 @@ export function StatsSection({ stats, total }: StatsSectionProps) {
     </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  divider: {
-    width: 1,
-    height: 16,
-    backgroundColor: "#E5E7EB",
-  },
-});
