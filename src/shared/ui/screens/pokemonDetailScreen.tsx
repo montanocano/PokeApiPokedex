@@ -48,7 +48,11 @@ export default function PokemonDetailScreen({
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={lightColors.textOnPrimary} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={lightColors.textOnPrimary}
+          />
         </TouchableOpacity>
         <YStack flex={1} alignItems="center" justifyContent="center" gap="$md">
           <ActivityIndicator size="large" color={lightColors.textOnPrimary} />
