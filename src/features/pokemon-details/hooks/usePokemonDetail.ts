@@ -19,10 +19,13 @@ export function usePokemonDetail(id: number | string | null) {
     if (id !== null) {
       fetchDetail(id);
     }
+  }, [id, fetchDetail]);
+
+  useEffect(() => {
     return () => {
       clearDetail();
     };
-  }, [id, fetchDetail, clearDetail]);
+  }, [clearDetail]);
 
   const handleRetry = useCallback(() => {
     if (id !== null) {
