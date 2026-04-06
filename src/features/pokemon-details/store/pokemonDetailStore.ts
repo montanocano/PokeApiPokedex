@@ -1,6 +1,6 @@
 import { immer } from "zustand/middleware/immer";
 import type { PokemonDetail } from "../../../shared/api/Types";
-import type { PokemonDetailRepository } from "../repositories/defaultpokemonDetailRepository";
+import type { PokemonDetailRepository } from "../repositories/DefaultPokemonDetailRepository";
 
 interface PokemonDetailState {
   detail: PokemonDetail | null;

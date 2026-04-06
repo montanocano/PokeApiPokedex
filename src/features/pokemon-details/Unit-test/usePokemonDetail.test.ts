@@ -6,7 +6,7 @@ import { createStore, type StoreApi } from "zustand/vanilla";
 import { usePokemonDetail } from "../hooks/usePokemonDetail";
 import { createPokemonDetailStore } from "../store/pokemonDetailStore";
 import type { PokemonDetailStore } from "../store/pokemonDetailStore";
-import type { PokemonDetailRepository } from "../repositories/defaultpokemonDetailRepository";
+import type { PokemonDetailRepository } from "../repositories/DefaultPokemonDetailRepository";
 import type { PokemonDetail } from "../../../shared/api/Types";
 
 // mock of getDetail to control what it returns in each test
