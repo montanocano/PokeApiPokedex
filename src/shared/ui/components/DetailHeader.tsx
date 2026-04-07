@@ -1,0 +1,46 @@
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { XStack, Text } from "tamagui";
+import { Ionicons } from "@expo/vector-icons";
+import { formatId } from "../../utils/formatters";
+import { lightColors } from "../tokens/colors";
+
+interface DetailHeaderProps {
+  pokemonId: number;
+  onBack: () => void;
+}
+
+export function DetailHeader({ pokemonId, onBack }: DetailHeaderProps) {
+  return (
+    <XStack
+      height={56}
+      paddingHorizontal="$xl"
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <TouchableOpacity
+        onPress={onBack}
+        style={styles.backBtn}
+        accessibilityLabel="Go back"
+        accessibilityRole="button"
+      >
+        <Ionicons
+          name="arrow-back"
+          size={24}
+          color={lightColors.textOnPrimary}
+        />
+      </TouchableOpacity>
+      <Text fontFamily="$mono" fontSize="$1" color="$overlayWhiteXStrong">
+        {formatId(pokemonId)}
+      </Text>
+    </XStack>
+  );
+}
+
+const styles = StyleSheet.create({
+  backBtn: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

@@ -13,6 +13,9 @@ import {
   TypeFilter,
   GenerationFilter,
 } from "../components";
+import { useRouter } from "expo-router";
+import { Button } from "../components/button";
+import { PokemonCard } from "../components/pokemonCard";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
 import { useSearchFilter } from "../../search-filter";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
@@ -60,6 +63,7 @@ const FooterContainer = styled(YStack, {
 // Screen
 
 export default function HomeScreen() {
+  const router = useRouter();
   const {
     list,
     isLoading,
@@ -87,8 +91,15 @@ export default function HomeScreen() {
     selectedGeneration !== null;
 
   const renderItem = useCallback(
-    ({ item }: { item: PokemonListItem }) => <PokemonCard item={item} />,
-    [],
+    ({ item }: { item: PokemonListItem }) => (
+      <PokemonCard
+        item={item}
+        onPress={() =>
+          router.push({ pathname: "/[id]", params: { id: String(item.id) } })
+        }
+      />
+    ),
+    [router],
   );
 
   const keyExtractor = useCallback(

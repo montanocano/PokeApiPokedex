@@ -1,3 +1,4 @@
+// Shared reusable components
 export { Button } from "./button";
 export type { ButtonProps } from "./button";
 
@@ -17,3 +18,9 @@ export { PokemonCard } from "./pokemonCard";
 export { TypeFilter } from "./TypeFilter";
 
 export { GenerationFilter } from "./GenerationFilter";
+// Pokemon detail section components
+export { DetailHeader } from "./DetailHeader";
+export { PokemonHeroSection } from "./PokemonHeroSection";
+export { AboutSection } from "./AboutSection";
+export { StatsSection } from "./StatsSection";
+export { StatRow } from "./StatRow";
