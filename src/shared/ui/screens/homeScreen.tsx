@@ -14,8 +14,6 @@ import {
   GenerationFilter,
 } from "../components";
 import { useRouter } from "expo-router";
-import { Button } from "../components/button";
-import { PokemonCard } from "../components/pokemonCard";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
 import { useSearchFilter } from "../../search-filter";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { styled, XStack, Input, getTokenValue } from "tamagui";
+import { styled, XStack, Input } from "tamagui";
 import { Search, X } from "lucide-react";
 import { lightColors } from "../tokens/colors";
 
