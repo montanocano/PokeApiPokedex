@@ -5,6 +5,8 @@ interface SearchFilterState {
   searchQuery: string;
   // multiple selected types supported
   selectedTypes: PokemonTypeName[];
+  // null means "all generations"
+  selectedGeneration: number | null;
 }
 
 interface SearchFilterActions {
@@ -12,7 +14,9 @@ interface SearchFilterActions {
   setSearchQuery: (query: string) => void;
   // action: toggle a type on/off — adds it if absent, removes it if present
   toggleType: (type: PokemonTypeName) => void;
-  // action: reset both filters at once
+  // action: set generation — null clears it
+  setGeneration: (gen: number | null) => void;
+  // action: reset all filters at once
   clearFilters: () => void;
 }
 
@@ -23,6 +27,7 @@ export function createSearchFilterStore() {
     // initial state
     searchQuery: "",
     selectedTypes: [],
+    selectedGeneration: null,
 
     setSearchQuery: (query) => {
       set((state) => {
@@ -41,10 +46,17 @@ export function createSearchFilterStore() {
       });
     },
 
+    setGeneration: (gen) => {
+      set((state) => {
+        state.selectedGeneration = gen;
+      });
+    },
+
     clearFilters: () => {
       set((state) => {
         state.searchQuery = "";
         state.selectedTypes = [];
+        state.selectedGeneration = null;
       });
     },
   }));
@@ -55,8 +67,12 @@ export const selectSearchQuery = (state: SearchFilterStore) =>
   state.searchQuery;
 export const selectSelectedTypes = (state: SearchFilterStore) =>
   state.selectedTypes;
+export const selectSelectedGeneration = (state: SearchFilterStore) =>
+  state.selectedGeneration;
 export const selectSetSearchQuery = (state: SearchFilterStore) =>
   state.setSearchQuery;
 export const selectToggleType = (state: SearchFilterStore) => state.toggleType;
+export const selectSetGeneration = (state: SearchFilterStore) =>
+  state.setGeneration;
 export const selectClearFilters = (state: SearchFilterStore) =>
   state.clearFilters;

@@ -3,8 +3,10 @@ import { useSearchFilterStore } from "../store/store";
 import {
   selectSearchQuery,
   selectSelectedTypes,
+  selectSelectedGeneration,
   selectSetSearchQuery,
   selectToggleType,
+  selectSetGeneration,
   selectClearFilters,
 } from "../store/searchFilterStore";
 import { defaultSearchFilterRepository } from "../repositories/searchFilterRepositoryImpl";
@@ -26,8 +28,10 @@ export function useSearchFilter({
 }: UseSearchFilterOptions) {
   const searchQuery = useSearchFilterStore(selectSearchQuery);
   const selectedTypes = useSearchFilterStore(selectSelectedTypes);
+  const selectedGeneration = useSearchFilterStore(selectSelectedGeneration);
   const setSearchQuery = useSearchFilterStore(selectSetSearchQuery);
   const toggleType = useSearchFilterStore(selectToggleType);
+  const setGeneration = useSearchFilterStore(selectSetGeneration);
   const clearFilters = useSearchFilterStore(selectClearFilters);
 
   // inputValue mirrors what the user is typing — updates immediately so the UI feels responsive
@@ -70,6 +74,14 @@ export function useSearchFilter({
     [toggleType],
   );
 
+  // action: select a generation — passing the same gen again deselects it (toggle)
+  const handleGenerationChange = useCallback(
+    (gen: number) => {
+      setGeneration(selectedGeneration === gen ? null : gen);
+    },
+    [setGeneration, selectedGeneration],
+  );
+
   // action: clear filters — also cancels any pending debounce to prevent stale query
   const handleClearFilters = useCallback(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -79,17 +91,24 @@ export function useSearchFilter({
 
   // selector: filtered pokemon — memoized so it only recomputes when deps change
   const filteredList = useMemo(
-    () => repository.filterPokemon(list, { searchQuery, selectedTypes }),
-    [repository, list, searchQuery, selectedTypes],
+    () =>
+      repository.filterPokemon(list, {
+        searchQuery,
+        selectedTypes,
+        selectedGeneration,
+      }),
+    [repository, list, searchQuery, selectedTypes, selectedGeneration],
   );
 
   return {
     inputValue,
     searchQuery,
     selectedTypes,
+    selectedGeneration,
     filteredList,
     handleSearchChange,
     handleTypeToggle,
+    handleGenerationChange,
     handleClearFilters,
   };
 }

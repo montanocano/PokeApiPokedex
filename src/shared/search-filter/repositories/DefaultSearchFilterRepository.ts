@@ -6,6 +6,8 @@ export interface FilterCriteria {
   searchQuery: string;
   // multiple types: pokemon must match at least one (OR logic)
   selectedTypes: PokemonTypeName[];
+  // null means no generation filter active
+  selectedGeneration: number | null;
 }
 
 // repository interface for filtering — any implementation must provide filterPokemon

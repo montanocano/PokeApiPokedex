@@ -6,7 +6,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
-import { Button, PokemonCard, SearchInput, TypeFilter } from "../components";
+import {
+  Button,
+  PokemonCard,
+  SearchInput,
+  TypeFilter,
+  GenerationFilter,
+} from "../components";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
 import { useSearchFilter } from "../../search-filter";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
@@ -67,13 +73,18 @@ export default function HomeScreen() {
   const {
     inputValue,
     selectedTypes,
+    selectedGeneration,
     filteredList,
     handleSearchChange,
     handleTypeToggle,
+    handleGenerationChange,
     handleClearFilters,
   } = useSearchFilter({ list });
 
-  const hasActiveFilters = inputValue.length > 0 || selectedTypes.length > 0;
+  const hasActiveFilters =
+    inputValue.length > 0 ||
+    selectedTypes.length > 0 ||
+    selectedGeneration !== null;
 
   const renderItem = useCallback(
     ({ item }: { item: PokemonListItem }) => <PokemonCard item={item} />,
@@ -157,6 +168,10 @@ export default function HomeScreen() {
           <TypeFilter
             selectedTypes={selectedTypes}
             onTypeToggle={handleTypeToggle}
+          />
+          <GenerationFilter
+            selectedGeneration={selectedGeneration}
+            onGenerationChange={handleGenerationChange}
           />
         </SearchContainer>
 

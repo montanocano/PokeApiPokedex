@@ -15,3 +15,5 @@ export { ErrorMessage } from "./ErrorMessage";
 export { PokemonCard } from "./pokemonCard";
 
 export { TypeFilter } from "./TypeFilter";
+
+export { GenerationFilter } from "./GenerationFilter";

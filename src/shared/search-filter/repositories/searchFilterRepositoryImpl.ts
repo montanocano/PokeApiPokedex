@@ -4,6 +4,19 @@ import type {
   SearchFilterRepository,
 } from "./DefaultSearchFilterRepository";
 
+// ID ranges for each generation (inclusive)
+const GENERATION_RANGES: Record<number, [number, number]> = {
+  1: [1, 151],
+  2: [152, 251],
+  3: [252, 386],
+  4: [387, 493],
+  5: [494, 649],
+  6: [650, 721],
+  7: [722, 809],
+  8: [810, 905],
+  9: [906, Infinity],
+};
+
 // client-side implementation — no network calls needed since types are already in PokemonListItem
 export const defaultSearchFilterRepository: SearchFilterRepository = {
   filterPokemon(
@@ -22,8 +35,19 @@ export const defaultSearchFilterRepository: SearchFilterRepository = {
         criteria.selectedTypes.length === 0 ||
         criteria.selectedTypes.every((t) => pokemon.types.includes(t));
 
-      // combined: both conditions must hold (AND logic between name and type)
-      return matchesName && matchesType;
+      // generation filter: check if pokemon ID falls within the generation's range
+      const matchesGeneration =
+        criteria.selectedGeneration === null ||
+        (() => {
+          const range = GENERATION_RANGES[criteria.selectedGeneration];
+          return (
+            range !== undefined &&
+            pokemon.id >= range[0] &&
+            pokemon.id <= range[1]
+          );
+        })();
+
+      return matchesName && matchesType && matchesGeneration;
     });
   },
 };

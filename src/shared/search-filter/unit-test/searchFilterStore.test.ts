@@ -9,10 +9,11 @@ function makeStore() {
 }
 
 describe("searchFilterStore", () => {
-  it("step 1 - starts with empty searchQuery and no selectedTypes", () => {
+  it("step 1 - starts with empty searchQuery, no selectedTypes, and no selectedGeneration", () => {
     const store = makeStore();
     expect(store.getState().searchQuery).toBe("");
     expect(store.getState().selectedTypes).toEqual([]);
+    expect(store.getState().selectedGeneration).toBeNull();
   });
 
   it("step 2 - setSearchQuery updates the query", () => {
@@ -50,13 +51,27 @@ describe("searchFilterStore", () => {
     expect(store.getState().selectedTypes).toEqual(["water"]);
   });
 
-  it("step 7 - clearFilters resets both query and selectedTypes", () => {
+  it("step 7 - setGeneration sets the selected generation", () => {
+    const store = makeStore();
+    store.getState().setGeneration(3);
+    expect(store.getState().selectedGeneration).toBe(3);
+  });
+
+  it("step 8 - setGeneration with null clears the generation", () => {
+    const store = makeStore();
+    store.getState().setGeneration(3);
+    store.getState().setGeneration(null);
+    expect(store.getState().selectedGeneration).toBeNull();
+  });
+
+  it("step 9 - clearFilters resets query, selectedTypes, and selectedGeneration", () => {
     const store = makeStore();
     store.getState().setSearchQuery("char");
     store.getState().toggleType("fire");
-    store.getState().toggleType("water");
+    store.getState().setGeneration(2);
     store.getState().clearFilters();
     expect(store.getState().searchQuery).toBe("");
     expect(store.getState().selectedTypes).toEqual([]);
+    expect(store.getState().selectedGeneration).toBeNull();
   });
 });
