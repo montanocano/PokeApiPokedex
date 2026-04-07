@@ -6,7 +6,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
-import { Button, PokemonCard } from "../components";
+import { useRouter } from "expo-router";
+import { Button } from "../components/button";
+import { PokemonCard } from "../components/pokemonCard";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
 import { primaryColors, lightColors } from "../tokens/colors";
@@ -47,6 +49,7 @@ const FooterContainer = styled(YStack, {
 // Screen
 
 export default function HomeScreen() {
+  const router = useRouter();
   const {
     list,
     isLoading,
@@ -58,8 +61,15 @@ export default function HomeScreen() {
   } = usePokemonList();
 
   const renderItem = useCallback(
-    ({ item }: { item: PokemonListItem }) => <PokemonCard item={item} />,
-    [],
+    ({ item }: { item: PokemonListItem }) => (
+      <PokemonCard
+        item={item}
+        onPress={() =>
+          router.push({ pathname: "/[id]", params: { id: String(item.id) } })
+        }
+      />
+    ),
+    [router],
   );
 
   const keyExtractor = useCallback(
