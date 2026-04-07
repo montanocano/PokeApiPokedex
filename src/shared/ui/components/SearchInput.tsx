@@ -1,10 +1,11 @@
 import { useCallback } from "react";
-import { styled, XStack, Input, useTheme, getTokenValue } from "tamagui";
+import { styled, XStack, Input, getTokenValue } from "tamagui";
 import { Search, X } from "lucide-react";
+import { lightColors } from "../tokens/colors";
 
 // Tokens used:
 // color:  $surface, $textDisabled
-// theme:  $borderColor, $borderColorFocus, $color
+// theme:  $borderColor, $borderColorFocus
 // radius: $4 = 24px (xl)
 // space:  $1 = 4, $2 = 8, $3 = 16
 
@@ -26,12 +27,15 @@ const SearchContainer = styled(XStack, {
 const SearchField = styled(Input, {
   flex: 1,
   fontSize: "$3",
-  color: "$color",
-  backgroundColor: "$transparent",
+  // explicit color so web doesn't inherit a transparent/invisible value
+  color: "$textPrimary",
+  backgroundColor: "transparent",
   borderWidth: 0,
   placeholderTextColor: "$textDisabled",
   padding: 0,
-});
+  // remove default web outline
+  outlineStyle: "none",
+} as object);
 
 interface SearchInputProps {
   value: string;
@@ -44,9 +48,7 @@ export function SearchInput({
   onChangeText,
   placeholder = "Search Pokémon...",
 }: SearchInputProps) {
-  // Resolve icon color from Tamagui theme instead of hardcoding
-  const theme = useTheme();
-  const iconColor = getTokenValue("$textSecondary", "color") as string;
+  const iconColor = lightColors.textSecondary;
 
   const handleClear = useCallback(() => {
     onChangeText("");

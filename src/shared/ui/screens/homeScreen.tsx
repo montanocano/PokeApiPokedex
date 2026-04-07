@@ -6,8 +6,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
-import { Button, PokemonCard } from "../components";
+import { Button, PokemonCard, SearchInput, TypeFilter } from "../components";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
+import { useSearchFilter } from "../../search-filter";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
 import { primaryColors, lightColors } from "../tokens/colors";
 
@@ -29,6 +30,12 @@ const HeaderTitle = styled(Text, {
   fontSize: "$6",
   fontWeight: "700",
   color: "$primary",
+});
+
+const SearchContainer = styled(YStack, {
+  paddingHorizontal: "$3",
+  paddingTop: "$2",
+  backgroundColor: "$background",
 });
 
 const CenterContainer = styled(YStack, {
@@ -56,6 +63,17 @@ export default function HomeScreen() {
     handleRetry,
     refreshList,
   } = usePokemonList();
+
+  const {
+    inputValue,
+    selectedTypes,
+    filteredList,
+    handleSearchChange,
+    handleTypeToggle,
+    handleClearFilters,
+  } = useSearchFilter({ list });
+
+  const hasActiveFilters = inputValue.length > 0 || selectedTypes.length > 0;
 
   const renderItem = useCallback(
     ({ item }: { item: PokemonListItem }) => <PokemonCard item={item} />,
@@ -118,8 +136,32 @@ export default function HomeScreen() {
           <HeaderTitle>Pokédex</HeaderTitle>
         </HeaderContainer>
 
+        <SearchContainer>
+          <XStack alignItems="center" gap="$2">
+            <YStack flex={1}>
+              <SearchInput
+                value={inputValue}
+                onChangeText={handleSearchChange}
+              />
+            </YStack>
+            {hasActiveFilters && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onPress={handleClearFilters}
+              >
+                Limpiar
+              </Button>
+            )}
+          </XStack>
+          <TypeFilter
+            selectedTypes={selectedTypes}
+            onTypeToggle={handleTypeToggle}
+          />
+        </SearchContainer>
+
         <FlatList
-          data={list}
+          data={filteredList}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           onEndReached={handleEndReached}

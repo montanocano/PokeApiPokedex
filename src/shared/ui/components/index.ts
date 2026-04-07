@@ -13,3 +13,5 @@ export { LoadingSpinner } from "./LoadingSpinner";
 export { ErrorMessage } from "./ErrorMessage";
 
 export { PokemonCard } from "./pokemonCard";
+
+export { TypeFilter } from "./TypeFilter";
