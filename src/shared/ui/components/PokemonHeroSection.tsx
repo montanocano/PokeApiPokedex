@@ -28,7 +28,7 @@ export function PokemonHeroSection({
             <Chip
               key={type}
               label={capitalise(type)}
-              color={lightColors.overlayWhiteMid}
+              color="$overlayWhiteMid"
               chipSize="md"
             />
           ))}
@@ -45,7 +45,7 @@ export function PokemonHeroSection({
           />
         ) : (
           <View style={[styles.pokemonImage, styles.imagePlaceholder]}>
-            <Text color={lightColors.overlayWhiteStrong} fontSize="$6">
+            <Text color="$overlayWhiteStrong" fontSize="$6">
               ?
             </Text>
           </View>

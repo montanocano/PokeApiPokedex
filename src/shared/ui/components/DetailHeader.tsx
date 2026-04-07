@@ -29,7 +29,7 @@ export function DetailHeader({ pokemonId, onBack }: DetailHeaderProps) {
           color={lightColors.textOnPrimary}
         />
       </TouchableOpacity>
-      <Text fontFamily="$mono" fontSize="$1" color="rgba(255,255,255,0.8)">
+      <Text fontFamily="$mono" fontSize="$1" color="$overlayWhiteXStrong">
         {formatId(pokemonId)}
       </Text>
     </XStack>
