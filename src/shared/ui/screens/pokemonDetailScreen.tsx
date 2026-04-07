@@ -19,7 +19,7 @@ import { typeColors, lightColors, primaryColors } from "../tokens/colors";
 import type { PokemonTypeName } from "../../api/Types";
 
 interface PokemonDetailScreenProps {
-  pokemonId: number | string;
+  pokemonId: number;
 }
 
 export default function PokemonDetailScreen({
