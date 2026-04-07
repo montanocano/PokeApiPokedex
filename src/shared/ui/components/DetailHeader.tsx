@@ -2,6 +2,7 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { XStack, Text } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import { formatId } from "../../utils/formatters";
+import { lightColors } from "../tokens/colors";
 
 interface DetailHeaderProps {
   pokemonId: number;
@@ -22,7 +23,11 @@ export function DetailHeader({ pokemonId, onBack }: DetailHeaderProps) {
         accessibilityLabel="Go back"
         accessibilityRole="button"
       >
-        <Ionicons name="arrow-back" size={24} color="#fff" />
+        <Ionicons
+          name="arrow-back"
+          size={24}
+          color={lightColors.textOnPrimary}
+        />
       </TouchableOpacity>
       <Text fontFamily="$mono" fontSize="$1" color="rgba(255,255,255,0.8)">
         {formatId(pokemonId)}

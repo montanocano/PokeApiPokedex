@@ -97,20 +97,7 @@ export default function PokemonDetailScreen({
     );
   }
 
-  if (!detail) {
-    return (
-      <SafeAreaView
-        style={[styles.safeArea, { backgroundColor: lightColors.background }]}
-      >
-        <YStack flex={1} alignItems="center" justifyContent="center" gap="$md">
-          <ActivityIndicator size="large" color={primaryColors.primary} />
-          <Text fontSize="$2" color="$textSecondary">
-            Loading Pokémon details...
-          </Text>
-        </YStack>
-      </SafeAreaView>
-    );
-  }
+  if (!detail) return null;
 
   const imageUri =
     detail.sprites.officialArtwork ??

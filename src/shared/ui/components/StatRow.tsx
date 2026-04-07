@@ -29,6 +29,8 @@ export function StatRow({ stat }: StatRowProps) {
         fontWeight="600"
         color="$textSecondary"
         textAlign="right"
+        numberOfLines={1}
+        ellipsizeMode="tail"
       >
         {label}
       </Text>
