@@ -74,4 +74,24 @@ describe("searchFilterStore", () => {
     expect(store.getState().selectedTypes).toEqual([]);
     expect(store.getState().selectedGeneration).toBeNull();
   });
+
+  it("step 10 - toggleGeneration selects a generation when none is active", () => {
+    const store = makeStore();
+    store.getState().toggleGeneration(3);
+    expect(store.getState().selectedGeneration).toBe(3);
+  });
+
+  it("step 11 - toggleGeneration deselects a generation when the same one is active", () => {
+    const store = makeStore();
+    store.getState().toggleGeneration(3);
+    store.getState().toggleGeneration(3);
+    expect(store.getState().selectedGeneration).toBeNull();
+  });
+
+  it("step 12 - toggleGeneration switches to a different generation", () => {
+    const store = makeStore();
+    store.getState().toggleGeneration(3);
+    store.getState().toggleGeneration(5);
+    expect(store.getState().selectedGeneration).toBe(5);
+  });
 });

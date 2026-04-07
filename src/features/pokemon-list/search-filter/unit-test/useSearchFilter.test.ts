@@ -9,8 +9,7 @@ import {
   createSearchFilterStore,
   type SearchFilterStore,
 } from "../store/searchFilterStore";
-import { defaultSearchFilterRepository } from "../repositories/searchFilterRepositoryImpl";
-import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
+import type { PokemonListItem } from "../../repositories/DefaultPokemonRepository";
 
 jest.useFakeTimers();
 
@@ -50,12 +49,7 @@ beforeEach(() => {
 
 describe("useSearchFilter", () => {
   it("step 1 - starts with empty inputValue and returns the full list", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     expect(result.current.inputValue).toBe("");
     expect(result.current.searchQuery).toBe("");
@@ -64,12 +58,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 2 - handleSearchChange updates inputValue immediately but debounces the store", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleSearchChange("char");
@@ -81,12 +70,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 3 - after 300ms the store updates and the list is filtered by name (case insensitive)", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleSearchChange("CHAR");
@@ -100,12 +84,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 4 - rapid typing only triggers one store update (last value wins)", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleSearchChange("c");
@@ -119,12 +98,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 5 - handleTypeToggle adds a type to the filter", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleTypeToggle("fire");
@@ -143,10 +117,7 @@ describe("useSearchFilter", () => {
     ];
 
     const { result } = renderHook(() =>
-      useSearchFilter({
-        list: listWithDualType,
-        repository: defaultSearchFilterRepository,
-      }),
+      useSearchFilter({ list: listWithDualType }),
     );
 
     await act(async () => {
@@ -161,12 +132,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 7 - handleTypeToggle pressing the same type removes it from the selection", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleTypeToggle("fire");
@@ -184,12 +150,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 8 - combined name + type filter (AND logic between name and types)", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleTypeToggle("grass");
@@ -203,12 +164,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 9 - combined filter returns empty when name matches but type does not", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleTypeToggle("water");
@@ -220,12 +176,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 10 - handleClearFilters resets query, selectedTypes and inputValue", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleTypeToggle("fire");
@@ -245,12 +196,7 @@ describe("useSearchFilter", () => {
   });
 
   it("step 11 - handleClearFilters cancels a pending debounce", async () => {
-    const { result } = renderHook(() =>
-      useSearchFilter({
-        list: sampleList,
-        repository: defaultSearchFilterRepository,
-      }),
-    );
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
 
     await act(async () => {
       result.current.handleSearchChange("char");
@@ -266,6 +212,41 @@ describe("useSearchFilter", () => {
 
     expect(result.current.searchQuery).toBe("");
     expect(result.current.inputValue).toBe("");
+    expect(result.current.filteredList).toEqual(sampleList);
+  });
+
+  it("step 12 - handleGenerationChange filters by generation range", async () => {
+    const gen1List = [
+      makeItem(1, "bulbasaur", ["grass", "poison"]),
+      makeItem(151, "mew", ["psychic"]),
+      makeItem(152, "chikorita", ["grass"]),
+    ];
+
+    const { result } = renderHook(() => useSearchFilter({ list: gen1List }));
+
+    await act(async () => {
+      result.current.handleGenerationChange(1);
+    });
+
+    expect(result.current.selectedGeneration).toBe(1);
+    expect(result.current.filteredList).toEqual([
+      makeItem(1, "bulbasaur", ["grass", "poison"]),
+      makeItem(151, "mew", ["psychic"]),
+    ]);
+  });
+
+  it("step 13 - handleGenerationChange called with the same gen deselects it", async () => {
+    const { result } = renderHook(() => useSearchFilter({ list: sampleList }));
+
+    await act(async () => {
+      result.current.handleGenerationChange(1);
+    });
+    expect(result.current.selectedGeneration).toBe(1);
+
+    await act(async () => {
+      result.current.handleGenerationChange(1);
+    });
+    expect(result.current.selectedGeneration).toBeNull();
     expect(result.current.filteredList).toEqual(sampleList);
   });
 });

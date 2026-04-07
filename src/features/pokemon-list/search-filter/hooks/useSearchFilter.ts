@@ -6,32 +6,30 @@ import {
   selectSelectedGeneration,
   selectSetSearchQuery,
   selectToggleType,
-  selectSetGeneration,
+  selectToggleGeneration,
   selectClearFilters,
 } from "../store/searchFilterStore";
-import { defaultSearchFilterRepository } from "../repositories/searchFilterRepositoryImpl";
-import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
-import type { PokemonTypeName } from "../../api/Types";
-import type { SearchFilterRepository } from "../repositories/DefaultSearchFilterRepository";
+import { filterPokemon } from "../utils/filterPokemon";
+import type { PokemonListItem } from "../../repositories/DefaultPokemonRepository";
+import type { PokemonTypeName } from "../../../../shared/api/Types";
 
 const DEBOUNCE_MS = 300;
 
 interface UseSearchFilterOptions {
   list: PokemonListItem[];
-  // injectable for testing; defaults to the client-side implementation
-  repository?: SearchFilterRepository;
 }
 
-export function useSearchFilter({
-  list,
-  repository = defaultSearchFilterRepository,
-}: UseSearchFilterOptions) {
+// filteredList is intentionally derived per-consumer in this hook rather than
+// stored in the SearchFilterStore. The store owns filter criteria only; the
+// result is computed here so the store stays a pure criteria container and
+// avoids coupling it to the list state owned by usePokemonList.
+export function useSearchFilter({ list }: UseSearchFilterOptions) {
   const searchQuery = useSearchFilterStore(selectSearchQuery);
   const selectedTypes = useSearchFilterStore(selectSelectedTypes);
   const selectedGeneration = useSearchFilterStore(selectSelectedGeneration);
   const setSearchQuery = useSearchFilterStore(selectSetSearchQuery);
   const toggleType = useSearchFilterStore(selectToggleType);
-  const setGeneration = useSearchFilterStore(selectSetGeneration);
+  const toggleGeneration = useSearchFilterStore(selectToggleGeneration);
   const clearFilters = useSearchFilterStore(selectClearFilters);
 
   // inputValue mirrors what the user is typing — updates immediately so the UI feels responsive
@@ -77,9 +75,9 @@ export function useSearchFilter({
   // action: select a generation — passing the same gen again deselects it (toggle)
   const handleGenerationChange = useCallback(
     (gen: number) => {
-      setGeneration(selectedGeneration === gen ? null : gen);
+      toggleGeneration(gen);
     },
-    [setGeneration, selectedGeneration],
+    [toggleGeneration],
   );
 
   // action: clear filters — also cancels any pending debounce to prevent stale query
@@ -92,12 +90,8 @@ export function useSearchFilter({
   // selector: filtered pokemon — memoized so it only recomputes when deps change
   const filteredList = useMemo(
     () =>
-      repository.filterPokemon(list, {
-        searchQuery,
-        selectedTypes,
-        selectedGeneration,
-      }),
-    [repository, list, searchQuery, selectedTypes, selectedGeneration],
+      filterPokemon(list, { searchQuery, selectedTypes, selectedGeneration }),
+    [list, searchQuery, selectedTypes, selectedGeneration],
   );
 
   return {

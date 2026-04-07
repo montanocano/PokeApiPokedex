@@ -1,5 +1,5 @@
 import { immer } from "zustand/middleware/immer";
-import type { PokemonTypeName } from "../../api/Types";
+import type { PokemonTypeName } from "../../../../shared/api/Types";
 
 interface SearchFilterState {
   searchQuery: string;
@@ -14,8 +14,10 @@ interface SearchFilterActions {
   setSearchQuery: (query: string) => void;
   // action: toggle a type on/off — adds it if absent, removes it if present
   toggleType: (type: PokemonTypeName) => void;
-  // action: set generation — null clears it
+  // action: set generation explicitly — null clears it
   setGeneration: (gen: number | null) => void;
+  // action: toggle a generation — same gen deselects it, different gen selects it
+  toggleGeneration: (gen: number) => void;
   // action: reset all filters at once
   clearFilters: () => void;
 }
@@ -52,6 +54,13 @@ export function createSearchFilterStore() {
       });
     },
 
+    toggleGeneration: (gen) => {
+      set((state) => {
+        state.selectedGeneration =
+          state.selectedGeneration === gen ? null : gen;
+      });
+    },
+
     clearFilters: () => {
       set((state) => {
         state.searchQuery = "";
@@ -74,5 +83,7 @@ export const selectSetSearchQuery = (state: SearchFilterStore) =>
 export const selectToggleType = (state: SearchFilterStore) => state.toggleType;
 export const selectSetGeneration = (state: SearchFilterStore) =>
   state.setGeneration;
+export const selectToggleGeneration = (state: SearchFilterStore) =>
+  state.toggleGeneration;
 export const selectClearFilters = (state: SearchFilterStore) =>
   state.clearFilters;

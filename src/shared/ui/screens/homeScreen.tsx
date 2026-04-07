@@ -15,7 +15,7 @@ import {
 } from "../components";
 import { useRouter } from "expo-router";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
-import { useSearchFilter } from "../../search-filter";
+import { useSearchFilter } from "../../../features/pokemon-list/search-filter";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
 import { primaryColors, lightColors } from "../tokens/colors";
 
@@ -74,6 +74,7 @@ export default function HomeScreen() {
 
   const {
     inputValue,
+    searchQuery,
     selectedTypes,
     selectedGeneration,
     filteredList,
@@ -84,7 +85,7 @@ export default function HomeScreen() {
   } = useSearchFilter({ list });
 
   const hasActiveFilters =
-    inputValue.length > 0 ||
+    searchQuery.length > 0 ||
     selectedTypes.length > 0 ||
     selectedGeneration !== null;
 
@@ -170,7 +171,7 @@ export default function HomeScreen() {
                 size="sm"
                 onPress={handleClearFilters}
               >
-                Limpiar
+                Clear
               </Button>
             )}
           </XStack>

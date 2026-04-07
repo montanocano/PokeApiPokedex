@@ -1,7 +1,6 @@
 import { useCallback } from "react";
-import { styled, XStack, Input } from "tamagui";
+import { styled, XStack, Input, useTheme } from "tamagui";
 import { Search, X } from "lucide-react";
-import { lightColors } from "../tokens/colors";
 
 // Tokens used:
 // color:  $surface, $textDisabled
@@ -48,7 +47,8 @@ export function SearchInput({
   onChangeText,
   placeholder = "Search Pokémon...",
 }: SearchInputProps) {
-  const iconColor = lightColors.textSecondary;
+  const theme = useTheme();
+  const iconColor = theme.colorPress?.val as string;
 
   const handleClear = useCallback(() => {
     onChangeText("");
