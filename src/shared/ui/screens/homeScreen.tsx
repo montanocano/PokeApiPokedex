@@ -6,10 +6,16 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
+import {
+  Button,
+  PokemonCard,
+  SearchInput,
+  TypeFilter,
+  GenerationFilter,
+} from "../components";
 import { useRouter } from "expo-router";
-import { Button } from "../components/button";
-import { PokemonCard } from "../components/pokemonCard";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
+import { useSearchFilter } from "../../../features/pokemon-list/search-filter";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
 import { primaryColors, lightColors } from "../tokens/colors";
 
@@ -31,6 +37,12 @@ const HeaderTitle = styled(Text, {
   fontSize: "$6",
   fontWeight: "700",
   color: "$primary",
+});
+
+const SearchContainer = styled(YStack, {
+  paddingHorizontal: "$3",
+  paddingTop: "$2",
+  backgroundColor: "$background",
 });
 
 const CenterContainer = styled(YStack, {
@@ -59,6 +71,23 @@ export default function HomeScreen() {
     handleRetry,
     refreshList,
   } = usePokemonList();
+
+  const {
+    inputValue,
+    searchQuery,
+    selectedTypes,
+    selectedGeneration,
+    filteredList,
+    handleSearchChange,
+    handleTypeToggle,
+    handleGenerationChange,
+    handleClearFilters,
+  } = useSearchFilter({ list });
+
+  const hasActiveFilters =
+    searchQuery.length > 0 ||
+    selectedTypes.length > 0 ||
+    selectedGeneration !== null;
 
   const renderItem = useCallback(
     ({ item }: { item: PokemonListItem }) => (
@@ -128,8 +157,36 @@ export default function HomeScreen() {
           <HeaderTitle>Pokédex</HeaderTitle>
         </HeaderContainer>
 
+        <SearchContainer>
+          <XStack alignItems="center" gap="$2">
+            <YStack flex={1}>
+              <SearchInput
+                value={inputValue}
+                onChangeText={handleSearchChange}
+              />
+            </YStack>
+            {hasActiveFilters && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onPress={handleClearFilters}
+              >
+                Clear
+              </Button>
+            )}
+          </XStack>
+          <TypeFilter
+            selectedTypes={selectedTypes}
+            onTypeToggle={handleTypeToggle}
+          />
+          <GenerationFilter
+            selectedGeneration={selectedGeneration}
+            onGenerationChange={handleGenerationChange}
+          />
+        </SearchContainer>
+
         <FlatList
-          data={list}
+          data={filteredList}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           onEndReached={handleEndReached}
