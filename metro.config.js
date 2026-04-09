@@ -14,7 +14,8 @@ const zustandDir = path.dirname(
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (moduleName.startsWith("zustand")) {
-    const subpath = moduleName.replace("zustand/", "").replace("zustand", "index") + ".js";
+    const subpath =
+      moduleName.replace("zustand/", "").replace("zustand", "index") + ".js";
     return {
       type: "sourceFile",
       filePath: path.join(zustandDir, subpath),
