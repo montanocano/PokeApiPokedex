@@ -14,6 +14,7 @@ export { LoadingSpinner } from "./LoadingSpinner";
 export { ErrorMessage } from "./ErrorMessage";
 
 export { PokemonCard } from "./pokemonCard";
+export { FavouriteButton } from "./FavouriteButton";
 
 export { TypeFilter } from "./TypeFilter";
 

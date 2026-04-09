@@ -1,2 +1,6 @@
-// Expo Router entry — renders the Home Screen as the root route
-export { default } from "../src/shared/ui/screens/homeScreen";
+import { Redirect } from "expo-router";
+
+// Root route: redirect to the tabs group so the tab bar is always visible
+export default function Index() {
+  return <Redirect href="/(tabs)" />;
+}

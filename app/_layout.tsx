@@ -19,7 +19,17 @@ export default function RootLayout() {
     <TamaguiProvider config={config} defaultTheme={colorScheme ?? "light"}>
       <Theme name={colorScheme === "dark" ? "dark" : "light"}>
         {/* headerShown: false on all screens — each screen manages its own header */}
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ animation: "none" }} />
+          <Stack.Screen
+            name="[id]"
+            options={{
+              animation: "slide_from_right",
+              gestureEnabled: true,
+              fullScreenGestureEnabled: true,
+            }}
+          />
+        </Stack>
       </Theme>
     </TamaguiProvider>
   );
