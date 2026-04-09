@@ -4,7 +4,7 @@ import { SafeAreaView, StyleSheet, FlatList } from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
 import { PokemonCard } from "../components";
 import { useRouter } from "expo-router";
-import { usePokemonFavourite } from "../../../features/pokemon-favourite/indexs";
+import { usePokemonFavourite } from "../../../features/pokemon-favourite/hooks/usePokemonFavourite";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
 import { lightColors } from "../tokens/colors";
 

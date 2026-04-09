@@ -115,8 +115,8 @@ export default function HomeScreen() {
     [],
   );
 
-  // Loading state — show spinner on first load (list empty, no error yet)
-  if (list.length === 0 && !error) {
+  // Loading state — show spinner only while the initial request is in progress
+  if (isLoading && list.length === 0 && !error) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <ScreenContainer>
