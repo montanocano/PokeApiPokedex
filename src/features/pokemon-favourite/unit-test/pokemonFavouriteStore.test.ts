@@ -1,12 +1,10 @@
 // Tests for pokemonFavouriteStore
-// Exercises add, remove, toggle, isFavourite, and duplicate guard
+// Exercises add, remove, toggle, and duplicate guard
 
-import { createStore } from "zustand/vanilla";
-import type { StoreApi } from "zustand";
+import { createStore, type StoreApi } from "zustand/vanilla";
 import {
   createPokemonFavouriteStore,
   selectFavourites,
-  selectIsFavourite,
 } from "../store/pokemonFavouriteStore";
 import type { PokemonFavouriteStore } from "../store/pokemonFavouriteStore";
 import type { PokemonListItem } from "../../pokemon-list/repositories/DefaultPokemonRepository";
@@ -15,12 +13,21 @@ function makePokemon(id: number): PokemonListItem {
   return { id, name: `pokemon-${id}`, sprite: null, types: ["fire"] };
 }
 
+// isFavourite is now derived from the favourites array, not a store method
+function isFavourite(
+  store: StoreApi<PokemonFavouriteStore>,
+  id: number,
+): boolean {
+  return selectFavourites(store.getState()).some((f) => f.id === id);
+}
+
 describe("pokemonFavouriteStore", () => {
   let store: StoreApi<PokemonFavouriteStore>;
 
   beforeEach(() => {
-    // Zustand v5: createStore is curried — createStore<T>()(initializer)
-    store = createStore<PokemonFavouriteStore>()(createPokemonFavouriteStore());
+    store = createStore(
+      createPokemonFavouriteStore(),
+    ) as StoreApi<PokemonFavouriteStore>;
   });
 
   it("starts with an empty favourites list", () => {
@@ -59,18 +66,18 @@ describe("pokemonFavouriteStore", () => {
 
   it("isFavourite returns true for an added pokemon", () => {
     store.getState().addFavourite(makePokemon(5));
-    expect(selectIsFavourite(store.getState())(5)).toBe(true);
+    expect(isFavourite(store, 5)).toBe(true);
   });
 
   it("isFavourite returns false for a pokemon not in the list", () => {
-    expect(selectIsFavourite(store.getState())(99)).toBe(false);
+    expect(isFavourite(store, 99)).toBe(false);
   });
 
   it("toggleFavourite adds a pokemon when it is not yet a favourite", () => {
     const p = makePokemon(3);
     store.getState().toggleFavourite(p);
     expect(selectFavourites(store.getState())).toHaveLength(1);
-    expect(selectIsFavourite(store.getState())(3)).toBe(true);
+    expect(isFavourite(store, 3)).toBe(true);
   });
 
   it("toggleFavourite removes a pokemon that is already a favourite", () => {

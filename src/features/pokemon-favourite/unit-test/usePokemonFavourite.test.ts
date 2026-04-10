@@ -63,12 +63,12 @@ describe("usePokemonFavourite", () => {
     mockTestStore.getState().addFavourite(p);
 
     const { result } = renderHook(() => usePokemonFavourite());
-    expect(result.current.isFavourite(7)).toBe(true);
+    expect(result.current.favourites.some((f) => f.id === 7)).toBe(true);
   });
 
   it("isFavourite returns false for a pokemon not in favourites", () => {
     const { result } = renderHook(() => usePokemonFavourite());
-    expect(result.current.isFavourite(99)).toBe(false);
+    expect(result.current.favourites.some((f) => f.id === 99)).toBe(false);
   });
 
   it("favourites updates reactively after handleToggle", () => {

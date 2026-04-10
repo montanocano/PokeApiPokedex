@@ -1,4 +1,3 @@
-"use no memo";
 import { useEffect, useCallback } from "react";
 import { usePokemonListStore } from "../store/store";
 import {

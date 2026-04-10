@@ -1,12 +1,16 @@
-"use no memo";
-import { useCallback } from "react";
-import { SafeAreaView, StyleSheet, FlatList } from "react-native";
+import { useCallback, useMemo } from "react";
+import {
+  SafeAreaView,
+  StyleSheet,
+  FlatList,
+  useColorScheme,
+} from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
 import { PokemonCard } from "../components";
 import { useRouter } from "expo-router";
 import { usePokemonFavourite } from "../../../features/pokemon-favourite/hooks/usePokemonFavourite";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
-import { lightColors } from "../tokens/colors";
+import { lightColors, darkColors } from "../tokens/colors";
 
 const ScreenContainer = styled(YStack, {
   flex: 1,
@@ -36,7 +40,15 @@ const EmptyContainer = styled(YStack, {
 
 export default function FavouritesScreen() {
   const router = useRouter();
-  const { favourites, isFavourite, handleToggle } = usePokemonFavourite();
+  const colorScheme = useColorScheme();
+  const colors = colorScheme === "dark" ? darkColors : lightColors;
+  const { favourites, handleToggle } = usePokemonFavourite();
+
+  // Derive a Set from the favourites array — avoids calling get() at render time
+  const favouriteIds = useMemo(
+    () => new Set(favourites.map((f) => f.id)),
+    [favourites],
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: PokemonListItem }) => (
@@ -45,11 +57,11 @@ export default function FavouritesScreen() {
         onPress={() =>
           router.push({ pathname: "/[id]", params: { id: String(item.id) } })
         }
-        isFavourite={isFavourite(item.id)}
+        isFavourite={favouriteIds.has(item.id)}
         onToggleFavourite={handleToggle}
       />
     ),
-    [router, isFavourite, handleToggle],
+    [router, favouriteIds, handleToggle],
   );
 
   const keyExtractor = useCallback(
@@ -58,7 +70,9 @@ export default function FavouritesScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+    >
       <ScreenContainer>
         <HeaderContainer>
           <HeaderTitle>Favourites</HeaderTitle>
@@ -79,6 +93,7 @@ export default function FavouritesScreen() {
             data={favourites}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
+            style={styles.list}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
           />
@@ -91,7 +106,9 @@ export default function FavouritesScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: lightColors.background,
+  },
+  list: {
+    flex: 1,
   },
   listContent: {
     paddingHorizontal: 32,

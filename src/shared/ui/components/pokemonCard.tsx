@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { Platform } from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
 import { Image } from "expo-image";
@@ -62,6 +62,11 @@ function PokemonCardBase({
   isFavourite,
   onToggleFavourite,
 }: PokemonCardProps) {
+  // Stable callback — avoids creating a new closure on every render inside FavouriteButton
+  const handleFavouritePress = useCallback(() => {
+    onToggleFavourite?.(item);
+  }, [item, onToggleFavourite]);
+
   const card = (
     <Card
       pressable
@@ -110,7 +115,7 @@ function PokemonCardBase({
         {onToggleFavourite !== undefined && (
           <FavouriteButton
             isFavourite={isFavourite ?? false}
-            onPress={() => onToggleFavourite(item)}
+            onPress={handleFavouritePress}
           />
         )}
       </CardContent>

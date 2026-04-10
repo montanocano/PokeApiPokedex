@@ -1,4 +1,3 @@
-"use no memo";
 import { useCallback, useMemo } from "react";
 import {
   SafeAreaView,

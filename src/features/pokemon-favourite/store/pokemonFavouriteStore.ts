@@ -9,14 +9,13 @@ interface PokemonFavouriteActions {
   addFavourite: (pokemon: PokemonListItem) => void;
   removeFavourite: (id: number) => void;
   toggleFavourite: (pokemon: PokemonListItem) => void;
-  isFavourite: (id: number) => boolean;
 }
 
 export type PokemonFavouriteStore = PokemonFavouriteState &
   PokemonFavouriteActions;
 
 export function createPokemonFavouriteStore() {
-  return immer<PokemonFavouriteStore>((set, get) => ({
+  return immer<PokemonFavouriteStore>((set) => ({
     favourites: [],
 
     addFavourite: (pokemon) => {
@@ -44,10 +43,6 @@ export function createPokemonFavouriteStore() {
         }
       });
     },
-
-    isFavourite: (id) => {
-      return get().favourites.some((f) => f.id === id);
-    },
   }));
 }
 
@@ -60,5 +55,3 @@ export const selectRemoveFavourite = (state: PokemonFavouriteStore) =>
   state.removeFavourite;
 export const selectToggleFavourite = (state: PokemonFavouriteStore) =>
   state.toggleFavourite;
-export const selectIsFavourite = (state: PokemonFavouriteStore) =>
-  state.isFavourite;
