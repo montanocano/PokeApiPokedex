@@ -13,12 +13,12 @@ const zustandDir = path.dirname(
 
 // Explicit map — avoids fragile string-replace heuristics
 const ZUSTAND_CJS = {
-  "zustand":                    "index.js",
-  "zustand/middleware":         "middleware.js",
-  "zustand/middleware/immer":   "middleware/immer.js",
-  "zustand/react":              "react.js",
-  "zustand/vanilla":            "vanilla.js",
-  "zustand/shallow":            "shallow.js",
+  zustand: "index.js",
+  "zustand/middleware": "middleware.js",
+  "zustand/middleware/immer": "middleware/immer.js",
+  "zustand/react": "react.js",
+  "zustand/vanilla": "vanilla.js",
+  "zustand/shallow": "shallow.js",
 };
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {
