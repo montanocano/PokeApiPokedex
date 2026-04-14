@@ -37,7 +37,7 @@ export function LoadingSpinner({
         duration: 800,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     );
     animation.start();
     return () => animation.stop();

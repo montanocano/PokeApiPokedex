@@ -135,9 +135,13 @@ const tokens = createTokens({
     typeSteel: "#B7B7CE",
     typeFairy: "#D685AD",
 
-    // Transparent
+    // Transparent / overlay whites (used on coloured Pokémon-type backgrounds)
     transparent: "transparent",
     overlay: "rgba(0, 0, 0, 0.5)",
+    overlayWhite: "rgba(255, 255, 255, 0.2)",
+    overlayWhiteMid: "rgba(255, 255, 255, 0.35)",
+    overlayWhiteStrong: "rgba(255, 255, 255, 0.4)",
+    overlayWhiteXStrong: "rgba(255, 255, 255, 0.8)",
   },
 });
 

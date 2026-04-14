@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
-import { Slot, SplashScreen } from "expo-router";
+import { Stack, SplashScreen } from "expo-router";
 import { TamaguiProvider, Theme } from "tamagui";
 import config from "../Tamagui.config";
 
@@ -18,7 +18,18 @@ export default function RootLayout() {
   return (
     <TamaguiProvider config={config} defaultTheme={colorScheme ?? "light"}>
       <Theme name={colorScheme === "dark" ? "dark" : "light"}>
-        <Slot />
+        {/* headerShown: false on all screens — each screen manages its own header */}
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ animation: "none" }} />
+          <Stack.Screen
+            name="[id]"
+            options={{
+              animation: "slide_from_right",
+              gestureEnabled: true,
+              fullScreenGestureEnabled: true,
+            }}
+          />
+        </Stack>
       </Theme>
     </TamaguiProvider>
   );
