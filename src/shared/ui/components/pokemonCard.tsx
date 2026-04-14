@@ -1,8 +1,11 @@
-import { memo } from "react";
+import { memo, useCallback } from "react";
+import { Platform } from "react-native";
 import { YStack, XStack, Text, styled } from "tamagui";
 import { Image } from "expo-image";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { Card } from "./Card";
 import { Chip } from "./Chip";
+import { FavouriteButton } from "./FavouriteButton";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
 import type { PokemonTypeName } from "../../api/Types";
 import { typeColors } from "../tokens/colors";
@@ -49,10 +52,22 @@ function capitalise(str: string): string {
 interface PokemonCardProps {
   item: PokemonListItem;
   onPress?: () => void;
+  isFavourite?: boolean;
+  onToggleFavourite?: (item: PokemonListItem) => void;
 }
 
-function PokemonCardBase({ item, onPress }: PokemonCardProps) {
-  return (
+function PokemonCardBase({
+  item,
+  onPress,
+  isFavourite,
+  onToggleFavourite,
+}: PokemonCardProps) {
+  // Stable callback — avoids creating a new closure on every render inside FavouriteButton
+  const handleFavouritePress = useCallback(() => {
+    onToggleFavourite?.(item);
+  }, [item, onToggleFavourite]);
+
+  const card = (
     <Card
       pressable
       onPress={onPress}
@@ -96,8 +111,25 @@ function PokemonCardBase({ item, onPress }: PokemonCardProps) {
             ))}
           </TypesRow>
         </InfoContainer>
+
+        {onToggleFavourite !== undefined && (
+          <FavouriteButton
+            isFavourite={isFavourite ?? false}
+            onPress={handleFavouritePress}
+          />
+        )}
       </CardContent>
     </Card>
+  );
+
+  // On web, reanimated's Animated.View can leave items invisible (opacity:0)
+  // if the animation runtime isn't fully initialized. Use a plain wrapper instead.
+  if (Platform.OS === "web") {
+    return card;
+  }
+
+  return (
+    <Animated.View entering={FadeInDown.duration(250)}>{card}</Animated.View>
   );
 }
 

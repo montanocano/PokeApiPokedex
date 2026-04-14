@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,6 +16,7 @@ import {
 import { useRouter } from "expo-router";
 import { usePokemonList } from "../../../features/pokemon-list/hooks/usePokemonList";
 import { useSearchFilter } from "../../../features/pokemon-list/search-filter";
+import { usePokemonFavourite } from "../../../features/pokemon-favourite/hooks/usePokemonFavourite";
 import type { PokemonListItem } from "../../../features/pokemon-list/repositories/DefaultPokemonRepository";
 import { primaryColors, lightColors } from "../tokens/colors";
 
@@ -62,6 +63,11 @@ const FooterContainer = styled(YStack, {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { handleToggle, favourites } = usePokemonFavourite();
+  const favouriteIds = useMemo(
+    () => new Set(favourites.map((f) => f.id)),
+    [favourites],
+  );
   const {
     list,
     isLoading,
@@ -96,9 +102,11 @@ export default function HomeScreen() {
         onPress={() =>
           router.push({ pathname: "/[id]", params: { id: String(item.id) } })
         }
+        isFavourite={favouriteIds.has(item.id)}
+        onToggleFavourite={handleToggle}
       />
     ),
-    [router],
+    [router, favouriteIds, handleToggle],
   );
 
   const keyExtractor = useCallback(
@@ -106,8 +114,8 @@ export default function HomeScreen() {
     [],
   );
 
-  // Loading state
-  if (isLoading && list.length === 0) {
+  // Loading state — show spinner only while the initial request is in progress
+  if (isLoading && list.length === 0 && !error) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <ScreenContainer>
@@ -200,6 +208,7 @@ export default function HomeScreen() {
               </FooterContainer>
             ) : null
           }
+          style={styles.list}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
@@ -212,6 +221,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: lightColors.background,
+  },
+  list: {
+    flex: 1,
   },
   listContent: {
     paddingHorizontal: 32,
